@@ -1,8 +1,21 @@
 require 'test_helper'
 
-class KashmirTest < Minitest::Test
+describe Kashmir do
 
-  def test_something
-    assert 1+1 == 2 
+  class Recipe
+    include Kashmir
+
+    representations do
+      base([:title])
+    end
+
+    def initialize(title)
+      @title = title 
+    end
+  end
+
+  it 'renders basic attribute representations' do
+    recipe = Recipe.new('Beef stew')
+    assert_equal recipe.represent, { title: 'Beef stew' }
   end
 end
