@@ -29,14 +29,20 @@ module Kashmir
       rep(:base, fields)
     end
 
-    def rep(title, fields)
-      definitions[title] = Representation.new(title, fields)
+    def rep(title, fields=[])
+      representation = if fields.empty?
+                         Representation.new(title, [title])
+                       else
+                         Representation.new(title, fields)
+                       end
+      definitions[title] = representation
     end
 
     def definitions
-      @@_definitions ||= {}
-      @@_definitions
+      @definitions ||= {}
+      @definitions
     end
+
   end
 
   class Representation
@@ -48,20 +54,36 @@ module Kashmir
 
     def run_for(instance)
       representation = {}
-
       instance_vars = instance.instance_variables
 
       @fields.each do |field|
-        value = if instance.respond_to?(field)
-                  instance.send(field)
-                else
-                  instance.instance_variable_get("@#{field}")
-                end
-
-        representation[field] = value
+        value = read_value(instance, field)
+        if primitive?(value)
+          representation[field] = value
+        else
+          representation[field] = present_value(value)
+        end
       end
 
       representation
+    end
+
+    def present_value(value)
+      if value.is_a?(Kashmir)
+        value.represent
+      end
+    end
+
+    def read_value(instance, field)
+      if instance.respond_to?(field)
+        instance.send(field)
+      else
+        instance.instance_variable_get("@#{field}")
+      end
+    end
+
+    def primitive?(field_value)
+      [Fixnum, String, Date, Time, TrueClass, FalseClass, Symbol].include?(field_value.class)
     end
   end
 end

@@ -8,16 +8,30 @@ describe Kashmir do
     representations do
       base([:title, :preparation_time])
       rep(:num_steps, [:num_steps])
+      rep(:chef)
     end
 
-    def initialize(title, preparation_time, steps=[])
+    def initialize(title, preparation_time, steps=[], chef=nil)
       @title = title 
       @preparation_time = preparation_time
       @steps = steps
+      @chef = chef
     end
 
     def num_steps
       @steps.size
+    end
+  end
+
+  class Chef
+    include Kashmir
+
+    representations do
+      base([:name])
+    end
+
+    def initialize(name)
+      @name = name
     end
   end
 
@@ -34,5 +48,13 @@ describe Kashmir do
       preparation_time: 60, 
       num_steps: 2 
     }
+  end
+
+  it 'renders nested representations' do
+    chef = Chef.new('Netto')
+    recipe = Recipe.new('Beef Stew', 60, [], chef)
+
+    representation = recipe.represent([:chef])
+    assert_equal representation[:chef], { name: 'Netto' }
   end
 end
