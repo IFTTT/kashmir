@@ -7,16 +7,26 @@ module Kashmir
   end
 
 
-  def represent(representation_titles=[])
+  def represent(representation_definition=[])
     representation = {}
-    representation_titles << :base
+    representation_definition << :base
 
-    representation_titles.each do |representation_title|
-      represented_definition = self.class.definitions[representation_title].run_for(self)
-      representation = representation.merge(represented_definition)
+    representation_definition.each do |representation_definition|
+      key, arguments = parse_definition(representation_definition)
+
+      represented_document = self.class.definitions[key].run_for(self, arguments)
+      representation = representation.merge(represented_document)
     end
 
     representation
+  end
+
+  def parse_definition(representation_definition)
+    if representation_definition.is_a?(Symbol)
+      [ representation_definition, [] ]
+    elsif representation_definition.is_a?(Hash)
+      [ representation_definition.keys.first, representation_definition.values.flatten ]
+    end
   end
 
   module ClassMethods
@@ -42,7 +52,6 @@ module Kashmir
       @definitions ||= {}
       @definitions
     end
-
   end
 
   class Representation
@@ -52,7 +61,7 @@ module Kashmir
       @fields = fields
     end
 
-    def run_for(instance)
+    def run_for(instance, arguments)
       representation = {}
       instance_vars = instance.instance_variables
 
@@ -61,16 +70,16 @@ module Kashmir
         if primitive?(value)
           representation[field] = value
         else
-          representation[field] = present_value(value)
+          representation[field] = present_value(value, arguments)
         end
       end
 
       representation
     end
 
-    def present_value(value)
+    def present_value(value, arguments)
       if value.is_a?(Kashmir)
-        value.represent
+        value.represent(arguments)
       end
     end
 
