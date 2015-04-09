@@ -21,6 +21,11 @@ module Kashmir
         group(name, representer.definitions) 
       end
 
+      def inline(name, &inline_representer)
+        representer = Kashmir::InlineDsl.build(&inline_representer)
+        embed(name, representer) 
+      end
+
       def definitions
         @definitions ||= []
         @definitions

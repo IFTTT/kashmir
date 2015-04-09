@@ -84,4 +84,32 @@ describe Kashmir do
 
     assert_equal brisket_with_chef, @brisket.represent(DSLTesting::RecipeWithChefRepresenter.definitions)
   end
+
+  describe 'Nested inline representations' do
+
+    module DSLTesting
+      class RecipeWithInlineChefRepresenter
+        include Kashmir::Dsl
+
+        prop :title
+
+        inline :chef do
+          prop :full_name
+        end
+      end
+    end
+
+    it 'generates nested representations' do
+      brisket_with_chef = @brisket.represent([:title, { :chef => [:full_name] }])
+      assert_equal brisket_with_chef, { 
+        title: 'BBQ Brisket',
+        chef: {
+          full_name: 'Netto Farah'
+        }
+      }
+
+      assert_equal brisket_with_chef, @brisket.represent(DSLTesting::RecipeWithInlineChefRepresenter.definitions)
+    end
+  end
 end
+
