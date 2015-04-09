@@ -53,4 +53,16 @@ describe Kashmir::InlineDsl do
     cooked_brisket = @brisket.represent(inline_representer.definitions)
     assert_equal cooked_brisket, { title: 'BBQ Brisket', num_steps: 2 }
   end
+
+  describe 'Reduced syntax' do
+
+    it '#represent_with' do
+      cooked_brisket = @brisket.represent_with do
+        prop :title
+        prop :num_steps
+      end
+
+      assert_equal cooked_brisket, { title: 'BBQ Brisket', num_steps: 2 }
+    end
+  end
 end

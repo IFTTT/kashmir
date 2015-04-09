@@ -23,6 +23,11 @@ module Kashmir
     representation
   end
 
+  def represent_with(&block)
+    definitions = Kashmir::InlineDsl.build(&block).definitions
+    represent(definitions)
+  end
+
   def parse_definition(representation_definition)
     if representation_definition.is_a?(Symbol)
       [ representation_definition, [] ]
