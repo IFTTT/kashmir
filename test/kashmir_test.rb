@@ -123,11 +123,30 @@ describe 'Complex Representations' do
   end
 
   it 'allows clients to customize nested representations' do
-    representation = @netto.represent [{ restaurant: [:rating] }]
+    representation = @netto.represent [{ :restaurant => [:rating] }]
 
     assert_equal representation, {
       name: 'Netto',
       restaurant: { name: "Netto's BBQ Joint", rating: '5 stars' }
+    }
+  end
+
+  it 'allows clients to create complex representation trees' do
+    representation = @brisket.represent([
+      :chef => [
+        { :restaurant => [ :rating ] }
+      ]
+    ])
+
+    assert_equal representation, {
+      title: 'BBQ Brisket',
+      chef: {
+        name: 'Netto',
+        restaurant: {
+          name: "Netto's BBQ Joint",
+          rating: '5 stars'
+        }
+      }
     }
   end
 end
