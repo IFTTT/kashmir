@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'kashmir/dsl'
 
 describe Kashmir do
 

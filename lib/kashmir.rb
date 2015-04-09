@@ -1,5 +1,7 @@
 require "kashmir/version"
 require "kashmir/representation"
+require "kashmir/dsl"
+require "kashmir/inline_dsl"
 
 module Kashmir
 
