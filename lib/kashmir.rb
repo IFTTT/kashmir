@@ -7,10 +7,9 @@ module Kashmir
     klass.extend ClassMethods
   end
 
-
   def represent(representation_definition=[])
     representation = {}
-    representation_definition << :base
+    representation_definition << :base if self.class.definitions.include?(:base)
 
     representation_definition.each do |representation_definition|
       key, arguments = parse_definition(representation_definition)
