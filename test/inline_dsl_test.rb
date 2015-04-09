@@ -3,7 +3,7 @@ require 'test_helper'
 describe Kashmir::InlineDsl do
 
   module InlineDSLTesting
-    class Recipe
+    class Recipe < OpenStruct
       include Kashmir
 
       representations do
@@ -11,15 +11,9 @@ describe Kashmir::InlineDsl do
         rep(:title)
         rep(:chef)
       end
-
-      def initialize(title, num_steps, chef)
-        @title = title
-        @num_steps = num_steps
-        @chef = chef
-      end
     end
 
-    class Chef
+    class Chef < OpenStruct
       include Kashmir
 
       representations do
@@ -27,35 +21,24 @@ describe Kashmir::InlineDsl do
         rep(:award)
       end
 
-      def initialize(first_name, last_name, award)
-        @first_name = first_name
-        @last_name = last_name
-        @award = award
-      end
-
       def full_name
-        "#{@first_name} #{@last_name}"
+        "#{first_name} #{last_name}"
       end
     end
 
-    class Award
+    class Award < OpenStruct
       include Kashmir
 
       representations do
         base([:name, :year])
       end
-
-      def initialize(name, year)
-        @name = name
-        @year = year
-      end
     end
   end
 
   before do
-    @award   = InlineDSLTesting::Award.new('Best Chef', 2015)
-    @chef    = InlineDSLTesting::Chef.new('Netto', 'Farah', @award)
-    @brisket = InlineDSLTesting::Recipe.new('BBQ Brisket', 2, @chef)
+    @award   = InlineDSLTesting::Award.new(name: 'Best Chef', year: 2015)
+    @chef    = InlineDSLTesting::Chef.new(first_name: 'Netto', last_name: 'Farah', award: @award)
+    @brisket = InlineDSLTesting::Recipe.new(title: 'BBQ Brisket', num_steps: 2, chef: @chef)
   end
 
   it 'creates an inline representer' do

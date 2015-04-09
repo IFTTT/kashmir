@@ -3,7 +3,7 @@ require 'test_helper'
 describe Kashmir do
 
   module DSLTesting
-    class Recipe
+    class Recipe < OpenStruct
       include Kashmir
 
       representations do
@@ -11,31 +11,20 @@ describe Kashmir do
         rep(:title)
         rep(:chef)
       end
-
-      def initialize(title, num_steps, chef)
-        @title = title 
-        @num_steps = num_steps
-        @chef = chef
-      end
     end
 
-    class Chef
+    class Chef < OpenStruct
       include Kashmir
 
       representations do
         rep(:full_name)
       end
 
-      def initialize(first_name, last_name)
-        @first_name = first_name 
-        @last_name = last_name
-      end
-
       def full_name
-        "#{@first_name} #{@last_name}" 
+        "#{first_name} #{last_name}"
       end
     end
-    
+
     class SimpleRecipeRepresenter
       include Kashmir::Dsl
 
@@ -58,8 +47,8 @@ describe Kashmir do
   end
 
   before do
-    @chef    = DSLTesting::Chef.new('Netto', 'Farah')
-    @brisket = DSLTesting::Recipe.new('BBQ Brisket', 2, @chef)
+    @chef    = DSLTesting::Chef.new(first_name: 'Netto', last_name: 'Farah')
+    @brisket = DSLTesting::Recipe.new(title: 'BBQ Brisket', num_steps: 2, chef: @chef)
   end
 
   it 'translates to representation definitions' do
@@ -68,14 +57,14 @@ describe Kashmir do
   end
 
   it 'generates the same representations as hardcoded definitions' do
-    cooked_brisket = @brisket.represent([:num_steps, :title])   
+    cooked_brisket = @brisket.represent([:num_steps, :title])
     assert_equal cooked_brisket, { title: 'BBQ Brisket', num_steps: 2 }
     assert_equal cooked_brisket, @brisket.represent(DSLTesting::SimpleRecipeRepresenter.definitions)
   end
 
   it 'generates nested representations' do
     brisket_with_chef = @brisket.represent([:title, { :chef => [:full_name] }])
-    assert_equal brisket_with_chef, { 
+    assert_equal brisket_with_chef, {
       title: 'BBQ Brisket',
       chef: {
         full_name: 'Netto Farah'
@@ -101,7 +90,7 @@ describe Kashmir do
 
     it 'generates nested representations' do
       brisket_with_chef = @brisket.represent([:title, { :chef => [:full_name] }])
-      assert_equal brisket_with_chef, { 
+      assert_equal brisket_with_chef, {
         title: 'BBQ Brisket',
         chef: {
           full_name: 'Netto Farah'
