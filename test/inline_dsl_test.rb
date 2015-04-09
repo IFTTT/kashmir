@@ -13,7 +13,7 @@ describe Kashmir::InlineDsl do
       end
 
       def initialize(title, num_steps, chef)
-        @title = title 
+        @title = title
         @num_steps = num_steps
         @chef = chef
       end
@@ -24,21 +24,37 @@ describe Kashmir::InlineDsl do
 
       representations do
         rep(:full_name)
+        rep(:award)
       end
 
-      def initialize(first_name, last_name)
-        @first_name = first_name 
+      def initialize(first_name, last_name, award)
+        @first_name = first_name
         @last_name = last_name
+        @award = award
       end
 
       def full_name
-        "#{@first_name} #{@last_name}" 
+        "#{@first_name} #{@last_name}"
+      end
+    end
+
+    class Award
+      include Kashmir
+
+      representations do
+        base([:name, :year])
+      end
+
+      def initialize(name, year)
+        @name = name
+        @year = year
       end
     end
   end
 
   before do
-    @chef    = InlineDSLTesting::Chef.new('Netto', 'Farah')
+    @award   = InlineDSLTesting::Award.new('Best Chef', 2015)
+    @chef    = InlineDSLTesting::Chef.new('Netto', 'Farah', @award)
     @brisket = InlineDSLTesting::Recipe.new('BBQ Brisket', 2, @chef)
   end
 
@@ -56,13 +72,54 @@ describe Kashmir::InlineDsl do
 
   describe 'Reduced syntax' do
 
-    it '#represent_with' do
-      cooked_brisket = @brisket.represent_with do
-        prop :title
-        prop :num_steps
+    describe '#represent_with' do
+      it 'works with flat representers' do
+        cooked_brisket = @brisket.represent_with do
+          prop :title
+          prop :num_steps
+        end
+
+        assert_equal cooked_brisket, { title: 'BBQ Brisket', num_steps: 2 }
       end
 
-      assert_equal cooked_brisket, { title: 'BBQ Brisket', num_steps: 2 }
+      it 'works with nested representers' do
+        cooked_brisket = @brisket.represent_with do
+          prop :title
+          prop :num_steps
+
+          inline :chef do
+            prop :full_name
+          end
+        end
+
+        assert_equal cooked_brisket, {
+          title: 'BBQ Brisket',
+          num_steps: 2,
+          chef: {
+            full_name: 'Netto Farah'
+          }
+        }
+      end
+    end
+
+    it 'works with multi level nested representers' do
+      cooked_brisket = @brisket.represent_with do
+        prop :title
+        inline :chef do
+          prop :full_name
+          inline :award
+        end
+      end
+
+      assert_equal cooked_brisket, {
+        title: 'BBQ Brisket',
+        chef: {
+          full_name: 'Netto Farah',
+          award: {
+            name: 'Best Chef', year: 2015
+          }
+        }
+      }
     end
   end
 end

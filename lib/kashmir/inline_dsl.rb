@@ -6,7 +6,7 @@ module Kashmir
         include Kashmir::Dsl
       end
 
-      inline_representer.class_eval(&definitions)
+      inline_representer.class_eval(&definitions) if block_given?
       inline_representer
     end
   end
