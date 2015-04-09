@@ -39,6 +39,7 @@ module Kashmir
   module ClassMethods
 
     def representations(&definitions)
+      @definitions = {}
       class_eval(&definitions)
     end
 
@@ -57,7 +58,6 @@ module Kashmir
 
     def definitions
       @definitions ||= {}
-      @definitions
     end
   end
 end

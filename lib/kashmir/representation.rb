@@ -24,7 +24,13 @@ module Kashmir
 
     def present_value(value, arguments)
       if value.is_a?(Kashmir)
-        value.represent(arguments)
+        return value.represent(arguments)
+      end
+
+      if value.is_a?(Array)
+        value.map do |element|
+          present_value(element, arguments)
+        end
       end
     end
 

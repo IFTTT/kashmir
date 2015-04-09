@@ -125,3 +125,44 @@ describe 'Complex Representations' do
     }
   end
 end
+
+describe 'Collections' do
+
+  class Ingredient < OpenStruct
+    include Kashmir
+
+    representations do
+      rep(:name)
+      rep(:quantity)
+    end
+  end
+
+  class ClassyRecipe < OpenStruct
+    include Kashmir
+
+    representations do
+      rep(:title)
+      rep(:ingredients)
+    end
+  end
+
+  before(:each) do
+    @omelette = ClassyRecipe.new(title: 'Omelette Du Fromage')
+    @omelette.ingredients = [
+      Ingredient.new(name: 'Egg', quantity: 2),
+      Ingredient.new(name: 'Cheese', quantity: 'a lot!')
+    ]
+  end
+
+  it 'represents collections' do
+    nice_omelette = @omelette.represent([:title, { :ingredients => [ :name, :quantity ]}])
+
+    assert_equal nice_omelette, {
+      title: 'Omelette Du Fromage',
+      ingredients: [
+        { name: 'Egg', quantity: 2 },
+        { name: 'Cheese', quantity: 'a lot!' }
+      ]
+    }
+  end
+end
