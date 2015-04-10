@@ -8,8 +8,11 @@ Gem::Specification.new do |spec|
   spec.version       = Kashmir::VERSION
   spec.authors       = ["Netto Farah"]
   spec.email         = ["nettofarah@gmail.com"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Kashmir is a DSL for quickly defining contracts to decorate your models.}
+  spec.description   = %q{
+    Kashmir helps you easily define decorators/representers/presenters for ruby objects.
+    Optionally, Kashmir will also cache these views for faster lookups.
+  }
   spec.homepage      = ""
   spec.license       = "MIT"
 
