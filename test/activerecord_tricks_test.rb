@@ -55,15 +55,16 @@ describe 'ActiveRecord performance tricks' do
     end
   end
 
-  #it 'tries to preload records whenever possible' do
-    #track_queries do
-      #loop_through_chefs [@tom, @netto]
-    #end
-    #assert_equal 7, @selects.size
+  it 'tries to preload records whenever possible' do
+    track_queries do
+      loop_through_chefs [@tom, @netto]
+    end
+    assert_equal 7, @selects.size
 
-    #track_queries do
-      #AR::Recipe.where(id: @tom.id..@netto.id).represent([:recipes => [ :ingredients => [:name] ]])
-    #end
-    #assert_equal 3, @selects.size
-  #end
+    track_queries do
+      AR::Chef.where(id: @tom.id..@netto.id).represent([:recipes => [ :ingredients => [:name] ]])
+    end
+
+    assert_equal 4, @selects.size
+  end
 end
