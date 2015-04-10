@@ -3,68 +3,89 @@ require 'ar_test_helper'
 describe 'ActiveRecord performance tricks' do
 
   before(:each) do
-    @tom = AR::Chef.create(name: 'Tom')
+    AR::Chef.create(name: 'Tom').tap do |tom|
+      AR::Recipe.create(title: 'Pastrami Sandwich', chef: tom).tap do |r|
+        r.ingredients.create(name: 'Pastrami', quantity: 'a lot')
+        r.ingredients.create(name: 'Cheese', quantity: '1 slice')
+      end
 
-    @pastrami_sandwich = AR::Recipe.create(title: 'Pastrami Sandwich', chef: @tom)
-    @pastrami_sandwich.ingredients.create(name: 'Pastrami', quantity: 'a lot')
-    @pastrami_sandwich.ingredients.create(name: 'Cheese', quantity: '1 slice')
+      AR::Recipe.create(title: 'Belly Burger', chef: tom).tap do |r|
+        r.ingredients.create(name: 'Pork Belly', quantity: 'plenty')
+        r.ingredients.create(name: 'Green Apple', quantity: '2 slices')
+      end
 
-    @belly_burger = AR::Recipe.create(title: 'Belly Burger', chef: @tom)
-    @belly_burger.ingredients.create(name: 'Pork Belly', quantity: 'plenty')
-    @belly_burger.ingredients.create(name: 'Green Apple', quantity: '2 slices')
+      AR::Restaurant.create(name: 'Chef Tom Belly Burgers', owner: tom)
+    end
 
-    @restaurant = AR::Restaurant.create(name: 'Chef Tom Belly Burgers', owner: @tom)
+    AR::Chef.create(name: 'Netto').tap do |netto|
+      AR::Recipe.create(title: 'Turkey Sandwich', chef: netto).tap do |r|
+        r.ingredients.create(name: 'Turkey', quantity: 'a lot')
+        r.ingredients.create(name: 'Cheese', quantity: '1 slice')
+      end
 
-    @netto = AR::Chef.create(name: 'Netto')
-    @turkey_sandwich = AR::Recipe.create(title: 'Turkey Sandwich', chef: @netto)
-    @turkey_sandwich.ingredients.create(name: 'Turkey', quantity: 'a lot')
-    @turkey_sandwich.ingredients.create(name: 'Cheese', quantity: '1 slice')
-
-    @cheese_burger = AR::Recipe.create(title: 'Cheese Burger', chef: @netto)
-    @cheese_burger.ingredients.create(name: 'Patty', quantity: '1')
-    @cheese_burger.ingredients.create(name: 'Cheese', quantity: '2 slices')
-
-    @selects = []
-  end
-
-  def loop_through_chefs(chefs)
-    AR::Chef.where(id: chefs.map(&:id)).each do |chef|
-      chef.recipes.each do |rec|
-        rec.ingredients.each do |ing|
-          ing.name
-        end
+      AR::Recipe.create(title: 'Cheese Burger', chef: netto).tap do |r|
+        r.ingredients.create(name: 'Patty', quantity: '1')
+        r.ingredients.create(name: 'Cheese', quantity: '2 slices')
       end
     end
   end
 
-  def queries_collector
-    lambda do |name, start, finish, id, payload|
-      @selects << payload
-    end
-  end
-
-  def clear_query_cache
-    @selects = []
-    ActiveRecord::Base.connection.clear_query_cache
-  end
-
   def track_queries
-    clear_query_cache
+    selects = []
+    queries_collector = lambda do |name, start, finish, id, payload|
+      selects << payload
+    end
+
+    ActiveRecord::Base.connection.clear_query_cache
     ActiveSupport::Notifications.subscribed(queries_collector, 'sql.active_record') do
       yield
     end
+
+    selects
   end
 
-  it 'tries to preload records whenever possible' do
-    track_queries do
-      loop_through_chefs [@tom, @netto]
-    end
-    assert_equal 7, @selects.size
+  describe "Query preload to avoid N+1 queries" do
 
-    track_queries do
-      AR::Chef.where(id: @tom.id..@netto.id).represent([:recipes => [ :ingredients => [:name] ]])
+    it 'tries to preload records whenever possible' do
+      selects = track_queries do
+        AR::Chef.all.each do |chef|
+          chef.recipes.to_a
+        end
+      end
+      # SELECT * FROM chefs
+      # SELECT "recipes".* FROM "recipes" WHERE "recipes"."chef_id" = ?
+      # SELECT "recipes".* FROM "recipes" WHERE "recipes"."chef_id" = ?
+      assert_equal 3, selects.size
+
+      selects = track_queries do
+        AR::Chef.all.represent([:recipes])
+      end
+      # SELECT "chefs".* FROM "chefs"
+      # SELECT "recipes".* FROM "recipes" WHERE "recipes"."chef_id" IN (1, 2)
+      assert_equal 2, selects.size
     end
 
-    assert_equal 4, @selects.size
+    it 'preloads queries per each level in the tree' do
+      selects = track_queries do
+        AR::Chef.all.each do |chef|
+          chef.recipes.each do |recipe|
+            recipe.ingredients.to_a
+          end
+        end
+      end
+      # SELECT "chefs".* FROM "chefs"
+      # (2x) SELECT "recipes".* FROM "recipes" WHERE "recipes"."chef_id" = ?
+      # (4x) SELECT "ingredients".* FROM "ingredients" INNER JOIN "recipes_ingredients" ...
+      assert_equal 7, selects.size
+
+      selects = track_queries do
+        AR::Chef.all.represent([ :recipes => [ :ingredients => [:name] ] ])
+      end
+      # SELECT "chefs".* FROM "chefs"
+      # SELECT "recipes".* FROM "recipes" WHERE "recipes"."chef_id" IN (1, 2)
+      # SELECT "recipes_ingredients".* FROM "recipes_ingredients" WHERE "recipes_ingredients"."recipe_id" IN (1, 2, 3, 4)
+      # SELECT "ingredients".* FROM "ingredients" WHERE "ingredients"."id" IN (1, 2, 3, 4, 5, 6, 7, 8)
+      assert_equal 4, selects.size
+    end
   end
 end
