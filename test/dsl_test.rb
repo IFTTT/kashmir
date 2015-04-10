@@ -10,6 +10,7 @@ describe Kashmir do
         rep(:num_steps)
         rep(:title)
         rep(:chef)
+        rep(:ingredients)
       end
     end
 
@@ -86,6 +87,15 @@ describe Kashmir do
           prop :full_name
         end
       end
+
+      class Ingredient < OpenStruct
+        include Kashmir
+
+        representations do
+          rep(:name)
+          rep(:quantity)
+        end
+      end
     end
 
     it 'generates nested representations' do
@@ -100,5 +110,36 @@ describe Kashmir do
       assert_equal brisket_with_chef, @brisket.represent(DSLTesting::RecipeWithInlineChefRepresenter.definitions)
     end
   end
-end
 
+  describe 'Collections' do
+    module DSLTesting
+      class RecipeWithIngredientsRepresenter
+        include Kashmir::Dsl
+
+        prop :title
+
+        inline :ingredients do
+          prop :name
+          prop :quantity
+        end
+      end
+    end
+
+    it 'generates nested collections' do
+      @brisket.ingredients = [
+        DSLTesting::Ingredient.new(name: 'Beef', quantity: '8oz'),
+        DSLTesting::Ingredient.new(name: 'BBQ Sauce', quantity: 'plenty!'),
+      ]
+
+      cooked_brisket = {
+        title: 'BBQ Brisket',
+        ingredients: [
+          { name: 'Beef', quantity: '8oz' },
+          { name: 'BBQ Sauce', quantity: 'plenty!' }
+        ]
+      }
+
+      assert_equal cooked_brisket, @brisket.represent(DSLTesting::RecipeWithIngredientsRepresenter.definitions)
+    end
+  end
+end
