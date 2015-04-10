@@ -7,7 +7,7 @@ ActiveRecord::Schema.define do
 
   create_table :ingredients, force: true do |t|
     t.column :name, :string
-    t.column :quantity, :integer
+    t.column :quantity, :string
   end
 
   create_table :recipes_ingredients, force: true do |t|

@@ -17,6 +17,10 @@ module Kashmir
     representation_definition.each do |representation_definition|
       key, arguments = parse_definition(representation_definition)
 
+      unless self.class.definitions.keys.include?(key)
+        raise "#{key} is not defined as a representation for #{self.class.to_s}"
+      end
+
       represented_document = self.class.definitions[key].run_for(self, arguments)
       representation = representation.merge(represented_document)
     end
