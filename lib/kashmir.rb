@@ -1,5 +1,6 @@
 require "kashmir/version"
 require "kashmir/representation"
+require "kashmir/active_record_representation"
 require "kashmir/dsl"
 require "kashmir/inline_dsl"
 
@@ -48,10 +49,31 @@ module Kashmir
     end
 
     def rep(title, fields=[])
+      if reflection_names.include?(title)
+        return activerecord_rep(title, fields)
+      end
+
       representation = if fields.empty?
                          Representation.new(title, [title])
                        else
                          Representation.new(title, fields)
+                       end
+      definitions[title] = representation
+    end
+
+    def reflection_names
+      if self.respond_to?(:reflections)
+        return reflections.keys.map(&:to_sym)
+      end
+
+      []
+    end
+
+    def activerecord_rep(title, fields)
+      representation = if fields.empty?
+                         ActiveRecordRepresentation.new(title, [title])
+                       else
+                         ActiveRecordRepresentation.new(title, fields)
                        end
       definitions[title] = representation
     end

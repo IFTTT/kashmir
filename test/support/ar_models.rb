@@ -30,8 +30,11 @@ module AR
   class Chef < ActiveRecord::Base
     include Kashmir
 
+    has_many :recipes
+
     representations do
       rep :name
+      rep :recipes
     end
   end
 end
