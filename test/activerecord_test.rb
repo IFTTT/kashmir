@@ -1,5 +1,4 @@
 require 'ar_test_helper'
-require 'byebug'
 
 # see support/ar_models for model definitions
 
@@ -26,6 +25,39 @@ describe 'ActiveRecord integration' do
     end
 
     assert_equal ps, { title: 'Pastrami Sandwich' }
+  end
+
+  describe 'ActiveRecord::Relation' do
+    it 'represents relations' do
+      recipes = AR::Recipe.all.represent_with do
+        prop :title
+      end
+
+      assert_equal recipes, [
+        { title: 'Pastrami Sandwich' },
+        { title: 'Belly Burger' }
+      ]
+    end
+
+    it 'represents nested relations' do
+      recipes = AR::Recipe.all.represent_with do
+        prop :title
+        inline :ingredients do
+          prop :name
+        end
+      end
+
+      assert_equal recipes, [
+        {
+          title: 'Pastrami Sandwich',
+          ingredients: [ { name: 'Pastrami' }, { name: 'Cheese' } ]
+        },
+        {
+          title: 'Belly Burger',
+          ingredients: [ {name: 'Pork Belly'}, { name: 'Green Apple' } ]
+        }
+      ]
+    end
   end
 
   describe 'belongs_to' do

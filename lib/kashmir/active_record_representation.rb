@@ -6,7 +6,7 @@ module Kashmir
         return value.represent(arguments)
       end
 
-      if value.is_a?(Array) || value.is_a?(ActiveRecord::Relation)
+      if value.is_a?(Array) || value.is_a?(::ActiveRecord::Relation)
         value.map do |element|
           present_value(element, arguments)
         end

@@ -1,4 +1,6 @@
 require 'test_helper'
+require 'minitest/around'
+
 require 'active_record'
 
 ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:')
@@ -6,3 +8,12 @@ ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:'
 require 'support/schema'
 require 'support/ar_models'
 
+
+class Minitest::Test
+  def around(&block)
+    ActiveRecord::Base.transaction do
+      block.call
+      raise ActiveRecord::Rollback
+    end
+  end
+end

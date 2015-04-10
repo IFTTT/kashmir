@@ -9,6 +9,7 @@ module AR
     representations do
       rep :title
       rep :chef
+      rep :ingredients
     end
   end
 
