@@ -16,7 +16,7 @@ module Kashmir
   end
 
   def represent(representation_definition=[])
-    if cached_presenter = Kashmir::Caching.from_cache(representation_definition, self)
+    if cacheable? and cached_presenter = Kashmir::Caching.from_cache(representation_definition, self)
       return cached_presenter
     end
 
@@ -34,9 +34,13 @@ module Kashmir
       representation = representation.merge(represented_document)
     end
 
-    Kashmir::Caching.store_presenter(representation_definition, representation, self)
+    Kashmir::Caching.store_presenter(representation_definition, representation, self) if cacheable?
 
     representation
+  end
+
+  def cacheable?
+    respond_to?(:id)
   end
 
   def represent_with(&block)
