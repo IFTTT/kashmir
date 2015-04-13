@@ -116,4 +116,43 @@ describe 'Caching' do
       assert_equal selects.size, 1
     end
   end
+
+  describe 'collections' do
+    it 'caches every item' do
+      presented_recipes = AR::Recipe.all.represent([:title])
+
+      cached_keys = %w(
+        presenter:AR::Recipe:1:[:title]
+        presenter:AR::Recipe:2:[:title]
+      )
+
+      assert_equal cached_keys, Kashmir::Caching.keys
+    end
+
+    it 'presents from cache' do
+      selects = track_queries do
+        AR::Recipe.all.represent([:title, :ingredients => [:name]])
+      end
+      # SELECT "recipes_ingredients".* FROM "recipes_ingredients" WHERE "recipes_ingredients"."recipe_id" IN (1, 2)
+      # SELECT "ingredients".* FROM "ingredients" WHERE "ingredients"."id" IN (1, 2, 3, 4)
+      assert_equal 3, selects.size
+
+      selects = track_queries do
+        AR::Recipe.all.represent([:title, :ingredients => [:name]])
+      end
+      # SELECT "recipes".* FROM "recipes"
+      assert_equal 1, selects.size
+
+      cache_keys = [
+        "presenter:AR::Ingredient:1:[:name]",
+        "presenter:AR::Ingredient:2:[:name]",
+        "presenter:AR::Recipe:1:[:title, {:ingredients=>[:name]}]",
+        "presenter:AR::Ingredient:3:[:name]",
+        "presenter:AR::Ingredient:4:[:name]",
+        "presenter:AR::Recipe:2:[:title, {:ingredients=>[:name]}]"
+      ]
+
+      assert_equal cache_keys, Kashmir::Caching.keys
+    end
+  end
 end

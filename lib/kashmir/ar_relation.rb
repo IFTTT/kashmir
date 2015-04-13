@@ -2,11 +2,24 @@ module Kashmir
   module ArRelation
 
     def represent(representation_definition=[])
-      ActiveRecord::Associations::Preloader.new.preload(self, representation_definition)
+      cached_presenters = Kashmir::Caching.bulk_from_cache(representation_definition, self)
 
-      map do |subject|
+      to_load = []
+      self.zip(cached_presenters).each do |record, cached_presenter|
+        if cached_presenter.nil?
+          to_load << record
+        end
+      end
+
+      if to_load.any?
+        ActiveRecord::Associations::Preloader.new.preload(to_load, representation_definition)
+      end
+
+      to_load.map! do |subject|
         subject.represent(representation_definition)
       end
+
+      cached_presenters.compact + to_load
     end
 
     def represent_with(&block)

@@ -30,6 +30,6 @@ def track_queries
     yield
   end
 
-  selects
+  selects.map { |sel| sel[:sql] }
 end
 

@@ -10,6 +10,16 @@ module Kashmir
         end
       end
 
+      def bulk_from_cache(definitions, instances)
+        keys = instances.map do |instance|
+          presenter_key(definitions, instance)
+        end
+
+        keys.map do |key|
+          get(key)
+        end
+      end
+
       def store_presenter(definitions, representation, instance)
         key = presenter_key(definitions, instance)
         set(key, representation)
