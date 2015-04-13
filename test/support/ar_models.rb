@@ -31,10 +31,22 @@ module AR
     include Kashmir
 
     belongs_to :owner, class_name: 'Chef'
+    has_one :rating
 
     representations do
       rep :name
       rep :owner
+      rep :rating
+    end
+  end
+
+  class Rating < ActiveRecord::Base
+    include Kashmir
+
+    belongs_to :restaurant
+
+    representations do
+      rep :value
     end
   end
 
@@ -43,12 +55,13 @@ module AR
 
     has_many :recipes
     has_many :ingredients, through: :recipes
+    has_one  :restaurant, foreign_key: 'owner_id'
 
     representations do
       rep :name
       rep :recipes
       rep :ingredients
+      rep :restaurant
     end
   end
 end
-

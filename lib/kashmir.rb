@@ -3,6 +3,7 @@ require "kashmir/representation"
 require "kashmir/dsl"
 require "kashmir/inline_dsl"
 require "kashmir/ar"
+require "kashmir/caching"
 
 module Kashmir
 
@@ -15,6 +16,10 @@ module Kashmir
   end
 
   def represent(representation_definition=[])
+    if cached_presenter = Kashmir::Caching.from_cache(representation_definition, self)
+      return cached_presenter
+    end
+
     representation = {}
     representation_definition << :base if self.class.definitions.include?(:base)
 
@@ -28,6 +33,8 @@ module Kashmir
       represented_document = self.class.definitions[key].run_for(self, arguments)
       representation = representation.merge(represented_document)
     end
+
+    Kashmir::Caching.store_presenter(representation_definition, representation, self)
 
     representation
   end

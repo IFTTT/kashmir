@@ -7,20 +7,6 @@ describe 'ActiveRecord performance tricks' do
     TestData.create_netto
   end
 
-  def track_queries
-    selects = []
-    queries_collector = lambda do |name, start, finish, id, payload|
-      selects << payload
-    end
-
-    ActiveRecord::Base.connection.clear_query_cache
-    ActiveSupport::Notifications.subscribed(queries_collector, 'sql.active_record') do
-      yield
-    end
-
-    selects
-  end
-
   describe "Query preload to avoid N+1 queries" do
 
     it 'tries to preload records whenever possible' do

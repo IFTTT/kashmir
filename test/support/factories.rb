@@ -11,7 +11,9 @@ module TestData
         r.ingredients.create(name: 'Green Apple', quantity: '2 slices')
       end
 
-      AR::Restaurant.create(name: 'Chef Tom Belly Burgers', owner: tom)
+      AR::Restaurant.create(name: 'Chef Tom Belly Burgers', owner: tom) do |res|
+        res.create_rating(value: '3 stars')
+      end
     end
   end
 
