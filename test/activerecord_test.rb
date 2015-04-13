@@ -5,18 +5,10 @@ require 'ar_test_helper'
 describe 'ActiveRecord integration' do
 
   before(:each) do
-    @tom = AR::Chef.create(name: 'Tom')
-
-    @pastrami_sandwich = AR::Recipe.create(title: 'Pastrami Sandwich', chef: @tom)
-
-    @pastrami_sandwich.ingredients.create(name: 'Pastrami', quantity: 'a lot')
-    @pastrami_sandwich.ingredients.create(name: 'Cheese', quantity: '1 slice')
-
-    @belly_burger = AR::Recipe.create(title: 'Belly Burger', chef: @tom)
-    @belly_burger.ingredients.create(name: 'Pork Belly', quantity: 'plenty')
-    @belly_burger.ingredients.create(name: 'Green Apple', quantity: '2 slices')
-
-    @restaurant = AR::Restaurant.create(name: 'Chef Tom Belly Burgers', owner: @tom)
+    @tom = TestData.create_tom
+    @pastrami_sandwich = AR::Recipe.find_by_title('Pastrami Sandwich')
+    @belly_burger = AR::Recipe.find_by_title('Belly Burger')
+    @restaurant = AR::Restaurant.find_by_name('Chef Tom Belly Burgers')
   end
 
   it 'represents ar objects' do
