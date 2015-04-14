@@ -166,5 +166,27 @@ describe 'Caching' do
       @restaurant.represent([:name])
     end
 
+    describe 'skipping cache' do
+      # see current_customer_count in test/support/ar_models.rb
+
+      before(:each) do
+        @restaurant.update_attributes(current_customer_count: 10)
+        @representation = @restaurant.represent([:name, :current_customer_count])
+      end
+
+      it 'still renders everything normally' do
+        assert_equal @representation, { name: 'Chef Tom Belly Burgers', current_customer_count: 10 }
+      end
+
+      it 'does not include that field in the key' do
+        assert_equal %w(presenter:AR::Restaurant:1:[:name]), Kashmir::Caching.keys
+      end
+
+      it 'does not insert value in the cached results' do
+        assert_nil Kashmir::Caching.from_cache([:name, :current_customar_count], @restaurant)
+        assert_equal Kashmir::Caching.from_cache([:name], @restaurant), { name: 'Chef Tom Belly Burgers' }
+      end
+    end
+
   end
 end

@@ -33,9 +33,24 @@ module Kashmir
       representation = representation.merge(represented_document)
     end
 
-    Kashmir::Caching.store_presenter(representation_definition, representation, self) if cacheable?
+    cache!(representation_definition.dup, representation.dup)
 
     representation
+  end
+
+  def cache!(representation_definition, representation)
+    return unless cacheable?
+
+    (cache_black_list & representation_definition).each do |field_name|
+      representation_definition = representation_definition - [ field_name ]
+      representation.delete(field_name)
+    end
+
+    Kashmir::Caching.store_presenter(representation_definition, representation, self)
+  end
+
+  def cache_black_list
+    self.class.definitions.values.reject(&:should_cache?).map(&:field)
   end
 
   def cacheable?

@@ -26,6 +26,14 @@ module Kashmir
       @options.has_key?(:is_base) and !!@options[:is_base]
     end
 
+    def should_cache?
+      if @options.has_key?(:cacheable)
+        return !!@options[:cacheable]
+      end
+
+      true
+    end
+
     def present_value(value, arguments)
       if value.is_a?(Kashmir)
         return value.represent(arguments)

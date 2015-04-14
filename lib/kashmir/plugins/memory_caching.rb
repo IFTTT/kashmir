@@ -19,7 +19,7 @@ module Kashmir
         end
       end
 
-      def store_presenter(definitions, representation, instance)
+      def store_presenter(definitions, representation, instance, black_list=[])
         key = presenter_key(definitions, instance)
         set(key, representation)
       end
