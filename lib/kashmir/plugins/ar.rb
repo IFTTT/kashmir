@@ -9,6 +9,11 @@ module ActiveRecord
   end
 end
 
+# TODO: extract kashmir array module
+class Array
+  include Kashmir::ArRelation
+end
+
 module Kashmir
   module AR
 

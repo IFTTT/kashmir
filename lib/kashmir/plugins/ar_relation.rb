@@ -12,7 +12,7 @@ module Kashmir
       end
 
       if to_load.any?
-        ActiveRecord::Associations::Preloader.new.preload(to_load, representation_definition)
+        ActiveRecord::Associations::Preloader.new(to_load, representation_definition).run
       end
 
       to_load.map! do |subject|
@@ -32,30 +32,59 @@ end
 
 
 # MonkeyPatch ALERT
-#
+# For Rails 4
+#module ActiveRecord
+  #module Associations
+    #class Preloader
+      #def grouped_records(association, records)
+        #h = {}
+        #records.each do |record|
+          #next unless record
+
+          ## We have to reopen Preloader to allow for it
+          ## to accept any random attribute name as a preloadable association.
+          ##
+          ## This allows us to send any abirtrary Hash to Preloader.
+          ## Not only keys that we know are ActiveRecord relations in advance.
+          ##
+          #unless record.class._reflect_on_association(association)
+            #next
+          #end
+
+          #assoc = record.association(association)
+          #klasses = h[assoc.reflection] ||= {}
+          #(klasses[assoc.klass] ||= []) << record
+        #end
+        #h
+      #end
+    #end
+  #end
+#end
+
+# For Rails 3
 module ActiveRecord
   module Associations
     class Preloader
-      def grouped_records(association, records)
-        h = {}
-        records.each do |record|
-          next unless record
+      def records_by_reflection(association)
+        grouped = records.group_by do |record|
+          reflection = record.class.reflections[association]
 
-          # We have to reopen Preloader to allow for it
-          # to accept any random attribute name as a preloadable association.
-          #
-          # This allows us to send any abirtrary Hash to Preloader.
-          # Not only keys that we know are ActiveRecord relations in advance.
-          #
-          unless record.class._reflect_on_association(association)
+          ## We have to reopen Preloader to allow for it
+          ## to accept any random attribute name as a preloadable association.
+          ##
+          ## This allows us to send any abirtrary Hash to Preloader.
+          ## Not only keys that we know are ActiveRecord relations in advance.
+          ##
+          unless reflection
             next
           end
 
-          assoc = record.association(association)
-          klasses = h[assoc.reflection] ||= {}
-          (klasses[assoc.klass] ||= []) << record
+          reflection
         end
-        h
+
+        ## This takes out the unexisting relations
+        grouped.delete(nil)
+        grouped
       end
     end
   end

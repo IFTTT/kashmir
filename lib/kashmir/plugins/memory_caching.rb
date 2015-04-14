@@ -1,3 +1,5 @@
+require 'kashmir/extensions'
+
 module Kashmir
   module Caching
     module Memory
@@ -31,7 +33,7 @@ module Kashmir
       def get(key)
         @@cache ||= {}
         if data = @@cache[key]
-          JSON.parse(data).deep_symbolize_keys
+          SymbolizeHelper.symbolize_recursive JSON.parse(data)
         end
       end
 

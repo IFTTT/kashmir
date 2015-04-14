@@ -2,34 +2,31 @@ PATH
   remote: .
   specs:
     kashmir (0.0.1)
-      activerecord
+      activerecord (~> 3.2.8)
       dalli
 
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (4.2.1)
-      activesupport (= 4.2.1)
-      builder (~> 3.1)
-    activerecord (4.2.1)
-      activemodel (= 4.2.1)
-      activesupport (= 4.2.1)
-      arel (~> 6.0)
-    activesupport (4.2.1)
-      i18n (~> 0.7)
-      json (~> 1.7, >= 1.7.7)
-      minitest (~> 5.1)
-      thread_safe (~> 0.3, >= 0.3.4)
-      tzinfo (~> 1.1)
+    activemodel (3.2.21)
+      activesupport (= 3.2.21)
+      builder (~> 3.0.0)
+    activerecord (3.2.21)
+      activemodel (= 3.2.21)
+      activesupport (= 3.2.21)
+      arel (~> 3.0.2)
+      tzinfo (~> 0.3.29)
+    activesupport (3.2.21)
+      i18n (~> 0.6, >= 0.6.4)
+      multi_json (~> 1.0)
     ansi (1.5.0)
-    arel (6.0.0)
-    builder (3.2.2)
+    arel (3.0.3)
+    builder (3.0.4)
     byebug (4.0.5)
       columnize (= 0.9.0)
     columnize (0.9.0)
     dalli (2.7.4)
     i18n (0.7.0)
-    json (1.8.2)
     metaclass (0.0.4)
     minitest (5.5.1)
     minitest-ansi (0.1.2)
@@ -39,11 +36,10 @@ GEM
       minitest (~> 5.0)
     mocha (1.1.0)
       metaclass (~> 0.0.1)
+    multi_json (1.11.0)
     rake (10.4.2)
     sqlite3 (1.3.10)
-    thread_safe (0.3.5)
-    tzinfo (1.2.2)
-      thread_safe (~> 0.1)
+    tzinfo (0.3.43)
 
 PLATFORMS
   ruby
