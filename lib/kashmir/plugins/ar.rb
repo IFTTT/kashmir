@@ -1,6 +1,6 @@
 require "active_record"
-require "kashmir/active_record_representation"
-require "kashmir/ar_relation"
+require "kashmir/plugins/active_record_representation"
+require "kashmir/plugins/ar_relation"
 
 module ActiveRecord
 # = Active Record Relation

@@ -82,7 +82,7 @@ describe 'Caching' do
       cached_rating = from_cache([:value], @restaurant.rating)
       assert_equal representation[:restaurant][:rating], cached_rating
 
-      assert_equal 3, Kashmir::Caching.keys.size
+      assert_equal 3, all_keys.size
     end
 
     it 'tries to hit the cache at every level' do
@@ -105,7 +105,7 @@ describe 'Caching' do
       representation = @chef.represent(definition)
       Kashmir::Caching.clear(definition, @chef)
 
-      assert_equal 2, Kashmir::Caching.keys.size
+      assert_equal 2, all_keys.size
 
       @chef.reload
       selects = track_queries do
@@ -122,11 +122,11 @@ describe 'Caching' do
       presented_recipes = AR::Recipe.all.represent([:title])
 
       cached_keys = %w(
-        presenter:AR::Recipe:1:[:title]
-        presenter:AR::Recipe:2:[:title]
+        kashmir:AR::Recipe:1:[:title]
+        kashmir:AR::Recipe:2:[:title]
       )
 
-      assert_equal cached_keys, Kashmir::Caching.keys
+      assert_equal cached_keys.sort, all_keys.sort
     end
 
     it 'presents from cache' do
@@ -144,15 +144,15 @@ describe 'Caching' do
       assert_equal 1, selects.size
 
       cache_keys = [
-        "presenter:AR::Ingredient:1:[:name]",
-        "presenter:AR::Ingredient:2:[:name]",
-        "presenter:AR::Recipe:1:[:title, {:ingredients=>[:name]}]",
-        "presenter:AR::Ingredient:3:[:name]",
-        "presenter:AR::Ingredient:4:[:name]",
-        "presenter:AR::Recipe:2:[:title, {:ingredients=>[:name]}]"
+        "kashmir:AR::Ingredient:1:[:name]",
+        "kashmir:AR::Ingredient:2:[:name]",
+        "kashmir:AR::Recipe:1:[:title, {:ingredients=>[:name]}]",
+        "kashmir:AR::Ingredient:3:[:name]",
+        "kashmir:AR::Ingredient:4:[:name]",
+        "kashmir:AR::Recipe:2:[:title, {:ingredients=>[:name]}]"
       ]
 
-      assert_equal cache_keys, Kashmir::Caching.keys
+      assert_equal cache_keys.sort, all_keys.sort
     end
   end
 end

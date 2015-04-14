@@ -2,7 +2,7 @@ require "kashmir/version"
 require "kashmir/representation"
 require "kashmir/dsl"
 require "kashmir/inline_dsl"
-require "kashmir/ar"
+require "kashmir/plugins/ar"
 require "kashmir/caching"
 
 module Kashmir
