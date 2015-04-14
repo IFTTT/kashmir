@@ -32,27 +32,3 @@ def track_queries
 
   selects.map { |sel| sel[:sql] }
 end
-
-# grabbed this from: https://gist.github.com/bkimble/1365005
-def all_keys
-  require 'net/telnet'
-
-  rows = []
-
-  localhost = Net::Telnet::new("Host" => "localhost", "Port" => 11211, "Timeout" => 3)
-  matches   = localhost.cmd("String" => "stats items", "Match" => /^END/).scan(/STAT items:(\d+):number (\d+)/)
-
-  slabs = matches.inject([]) { |items, item| items << Hash[*['id','items'].zip(item).flatten]; items }
-
-  slabs.each do |slab|
-    localhost.cmd("String" => "stats cachedump #{slab['id']} #{slab['items']}", "Match" => /^END/) do |c|
-      matches = c.scan(/^ITEM (.+?) \[(\d+) b; (\d+) s\]$/).each do |key_data|
-        cache_key = key_data.first
-        rows << cache_key
-      end
-    end
-  end
-
-  localhost.close
-  rows
-end

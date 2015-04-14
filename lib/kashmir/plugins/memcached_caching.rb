@@ -45,12 +45,8 @@ module Kashmir
         client.delete(key)
       end
 
-      def flush!
-        client.flush_all
-      end
-
       def client
-        @client ||= Dalli::Client.new('localhost:11211', namespace: 'kashmir', compress: true)
+        @@client ||= Dalli::Client.new('localhost:11211', namespace: 'kashmir', compress: true)
       end
     end
   end
