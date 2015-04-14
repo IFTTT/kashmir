@@ -37,6 +37,8 @@ module AR
       rep :name
       rep :owner
       rep :rating
+
+      rep :current_customer_count, cacheable: false
     end
   end
 

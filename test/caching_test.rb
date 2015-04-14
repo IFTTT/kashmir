@@ -155,4 +155,16 @@ describe 'Caching' do
       assert_equal cache_keys, Kashmir::Caching.keys
     end
   end
+
+  describe 'misc' do
+
+    it 'does not cache already cached results' do
+      @restaurant.represent([:name])
+      assert_equal 1, Kashmir::Caching.keys.size
+
+      Kashmir::Caching.expects(:store_presenter).never
+      @restaurant.represent([:name])
+    end
+
+  end
 end

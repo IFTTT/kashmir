@@ -22,6 +22,7 @@ ActiveRecord::Schema.define do
   create_table :restaurants, force: true do |t|
     t.column :name, :string
     t.column :owner_id, :integer
+    t.column :current_customer_count, :integer
   end
 
   create_table :ratings, force: true do |t|

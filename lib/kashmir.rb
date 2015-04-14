@@ -21,9 +21,8 @@ module Kashmir
     end
 
     representation = {}
-    representation_definition << :base if self.class.definitions.include?(:base)
 
-    representation_definition.each do |representation_definition|
+    (representation_definition + base_representation).each do |representation_definition|
       key, arguments = parse_definition(representation_definition)
 
       unless self.class.definitions.keys.include?(key)
@@ -41,6 +40,10 @@ module Kashmir
 
   def cacheable?
     respond_to?(:id)
+  end
+
+  def base_representation
+    self.class.definitions.values.select(&:is_base?).map(&:field)
   end
 
   def represent_with(&block)
@@ -63,17 +66,15 @@ module Kashmir
       class_eval(&definitions)
     end
 
-    def base(fields=[])
-      rep(:base, fields)
+    def base(fields)
+      fields.each do |field|
+        rep(field, { is_base: true })
+      end
     end
 
-    def rep(title, fields=[])
-      representation = if fields.empty?
-                         Representation.new(title, [title])
-                       else
-                         Representation.new(title, fields)
-                       end
-      definitions[title] = representation
+    def rep(field, options={})
+      representation = Representation.new(field, options)
+      definitions[field] = representation
     end
 
     def definitions

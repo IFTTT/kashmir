@@ -18,9 +18,9 @@ module Kashmir
 
     module ClassMethods
 
-      def rep(title, fields=[])
-        if reflection_names.include?(title)
-          return activerecord_rep(title, fields)
+      def rep(field, options={})
+        if reflection_names.include?(field)
+          return activerecord_rep(field, options)
         end
 
         super
@@ -34,13 +34,9 @@ module Kashmir
         []
       end
 
-      def activerecord_rep(title, fields)
-        representation = if fields.empty?
-                           ActiveRecordRepresentation.new(title, [title])
-                         else
-                           ActiveRecordRepresentation.new(title, fields)
-                         end
-        definitions[title] = representation
+      def activerecord_rep(field, options)
+        representation = ActiveRecordRepresentation.new(field, options)
+        definitions[field] = representation
       end
     end
   end

@@ -7,7 +7,7 @@ describe Kashmir do
 
     representations do
       base([:title, :preparation_time])
-      rep(:num_steps, [:num_steps])
+      rep(:num_steps)
       rep(:chef)
     end
 
