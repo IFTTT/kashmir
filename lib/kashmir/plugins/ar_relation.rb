@@ -16,7 +16,7 @@ module Kashmir
       end
 
       to_load.map! do |subject|
-        subject.represent(representation_definition)
+        subject.represent(representation_definition) if subject.respond_to?(:represent)
       end
 
       cached_presenters.compact + to_load

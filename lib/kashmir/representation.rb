@@ -39,8 +39,12 @@ module Kashmir
         return value.represent(arguments)
       end
 
+      if value.respond_to?(:represent)
+        return value.represent(arguments)
+      end
+
       if value.is_a?(Array)
-        value.map do |element|
+        return value.map do |element|
           present_value(element, arguments)
         end
       end

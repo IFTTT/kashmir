@@ -13,7 +13,7 @@ module Kashmir
 
       def bulk_from_cache(definitions, instances)
         keys = instances.map do |instance|
-          presenter_key(definitions, instance)
+          presenter_key(definitions, instance) if instance.respond_to?(:id)
         end
 
         keys.map do |key|
