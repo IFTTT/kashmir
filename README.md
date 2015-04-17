@@ -233,7 +233,7 @@ brisket.represent([
 
 ### Collections
 Arrays of Kashmir objects work the same way as any other Kashmir representations.
-Kashmir will augment `Array` with `#represent` that will basically represent every item in the array.
+Kashmir will augment `Array` with `#represent` that will represent every item in the array.
 
 ```ruby
 class Ingredient < OpenStruct
@@ -327,7 +327,7 @@ class ChefRepresenter
   prop :full_name
 end
 ```
-Kashmir will inline the these classes and return a raw Kashmir description.
+Kashmir will inline these classes and return a raw Kashmir description.
 ```ruby
 RecipeWithChefRepresenter.definitions == [ :title, { :chef => [ :full_name ] }]
 => true
@@ -417,7 +417,7 @@ omelette.ingredients = [
   Ingredient.new(name: 'Cheese', quantity: 'a lot!')
 ]
 ```
-Just call `#represent_with(&block)` normally and start nesting other inline representations.
+Just call `#represent_with(&block)` and start nesting other inline representations.
 ```ruby
 omelette.represent_with do
   prop :title
