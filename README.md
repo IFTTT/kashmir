@@ -3,10 +3,10 @@
 Kashmir is a DSL built to allow developers to describe representations of their ruby objects.
 Kashmir will turn these ruby objects into `Hash`es that represent the dependency tree you just described.
 
-`Kashmir::ActiveRecord` will also optimize and try to balance `ActiveRecord` queries so your application hits the database as little as possible.
+`Kashmir::ActiveRecord` will also optimize and try to balance `ActiveRecord` queries, so your application hits the database as little as possible.
 
-`Kashmir::Caching` builds a dependecy tree for complex object representations and caches each level of this tree seperately. Kashmir will do so by creating cache views of each one of these layers, but also caching a complete tree.
-The caching engine is smart enough to fill out holes in the cache tree with fresh data from your database or other sort of data store.
+`Kashmir::Caching` builds a dependency tree for complex object representations and caches each level of this tree separately. Kashmir will do so by creating cache views of each one of these layers, but also caching a complete tree.
+The caching engine is smart enough to fill out holes in the cache tree with fresh data from your database or another sort of data store.
 
 Combine `Kashmir::Caching` + `Kashmir::ActiveRecord` for extra awesomeness.
 
@@ -69,7 +69,7 @@ Kashmir is better described with examples.
 
 #### Describing an object
 Only whitelisted fields can be represented by Kashmir.
-This is done so secret and private fields don't get exposed to clients, such as passwords and salts.
+This is done so secret fields don't get exposed to clients, such as passwords and salts.
 
 ``` ruby
 class Recipe < OpenStruct
@@ -155,7 +155,7 @@ Not happy with this syntax? Check out `Kashmir::DSL` or `Kashmir::InlineDSL` for
 
 #### Base representations
 Tired of repeating the same fields over and over?
-You can create a base representation for your objects so basic fields are returned automatically.
+You can create a base representation of your objects, so Kashmir returns basic fields automatically.
 ```ruby
 class Recipe
   include Kashmir
@@ -167,7 +167,7 @@ class Recipe
   end
 end
 ```
-`base(...)` takes an array with the fields you want to return on every representation of a give class.
+`base(...)` takes an array with the fields you want to return on every representation of a given class.
 
 ```ruby
 brisket = Recipe.new(title: 'BBQ Brisket', preparation_time: 'a long time')
@@ -359,9 +359,7 @@ class RecipeWithInlineChefRepresenter
   end
 end
 ```
-Using `inline(:property_name, &block)` will work the same way as `embed`. Except that you can now define short representations using ruby blocks. 
-
-Which leads us to our next topic.
+Using `inline(:property_name, &block)` will work the same way as `embed`. Except that you can now define short representations using ruby blocks. Leading us to our next topic.
 
 ### `Kashmir::InlineDsl`
 `Kashmir::InlineDsl` sits right in between raw representations and Representers. It reads much better than arrays of hashes and provides the expressiveness of `Kashmir::Dsl` without all the ceremony.
@@ -439,7 +437,7 @@ end
 ```
 
 Inline representations can become lengthy and confusing over time.
-If you find yourself nesting more than 2 levels or including more than 3 or 4 fields per level consider creating Representers with `Kashmir::Dsl`.
+If you find yourself nesting more than two levels or including more than 3 or 4 fields per level consider creating Representers with `Kashmir::Dsl`.
 
 ### `Kashmir::ActiveRecord`
 TODO: write description
