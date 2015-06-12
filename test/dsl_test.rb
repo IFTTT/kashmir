@@ -142,4 +142,21 @@ describe Kashmir do
       assert_equal cooked_brisket, @brisket.represent(DSLTesting::RecipeWithIngredientsRepresenter.definitions)
     end
   end
+
+  describe "Kashmir.props" do
+
+    module DSLTesting
+
+      class MultiPropRecipeRepresenter
+        include Kashmir::Dsl
+
+        props :num_steps, :title
+      end
+    end
+
+    it 'allows the client to specify many props at once' do
+      definitions = DSLTesting::MultiPropRecipeRepresenter.definitions
+      assert_equal definitions, [:num_steps, :title]
+    end
+  end
 end

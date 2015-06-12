@@ -11,6 +11,12 @@ module Kashmir
         definitions << name
       end
 
+      def props(*names)
+        names.each do |name|
+          prop(name)
+        end
+      end
+
       def group(name, fields)
         definition = Hash.new
         definition[name] = fields
