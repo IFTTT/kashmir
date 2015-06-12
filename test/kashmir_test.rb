@@ -166,3 +166,51 @@ describe 'Collections' do
     }
   end
 end
+
+describe "Hashes" do
+
+  class RecipeCategories < OpenStruct
+    include Kashmir
+
+    representations do
+      rep :categories
+    end
+  end
+
+  before(:each) do
+    @omelette = ClassyRecipe.new(title: 'Omelette Du Fromage')
+    @scrambled_eggs = ClassyRecipe.new(title: 'Scrambled Eggs')
+
+    @brisket = ClassyRecipe.new(title: 'Briksket')
+    @ribs = ClassyRecipe.new(title: 'BBQ Ribs')
+
+    @categories = [
+      { name: 'Breakfast', recipes: [ @omelette, @scrambled_eggs] },
+      { name: 'Dinner', recipes: [ @brisket, @ribs ] }
+    ]
+  end
+
+  it 'represents hashes' do
+    representation = RecipeCategories.new(categories: @categories).represent([{
+      categories: [
+        :name,
+        recipes: [:title]
+      ]
+    }])
+
+    assert_equal representation, {
+      categories: [
+        {
+          name: "Breakfast", recipes: [
+            { title: "Omelette Du Fromage" }, { title: "Scrambled Eggs" }
+          ]
+        },
+        {
+          name: "Dinner", recipes: [
+            { title: "Briksket" }, { title: "BBQ Ribs" }
+          ]
+        }
+      ]
+    }
+  end
+end
