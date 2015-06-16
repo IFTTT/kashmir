@@ -3,6 +3,11 @@ require 'ar_test_helper'
 describe 'Caching' do
 
   before(:all) do
+
+    Kashmir.init(
+      caching_strategy: Kashmir::Caching::Memory
+    )
+
     TestData.create_tom
     @restaurant = AR::Restaurant.find_by_name('Chef Tom Belly Burgers')
   end

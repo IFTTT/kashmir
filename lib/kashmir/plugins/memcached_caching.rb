@@ -13,7 +13,6 @@ module Kashmir
 
       def bulk_from_cache(definitions, instances)
         keys = instances.map do |instance|
-          debugger
           presenter_key(definitions, instance) if instance.respond_to?(:id)
         end
 
@@ -33,7 +32,7 @@ module Kashmir
 
       def get(key)
         if data = client.get(key)
-          JSON.parse(data).deep_symbolize_keys
+          JSON.parse(data, symbolize_names: true)
         end
       end
 
@@ -44,10 +43,6 @@ module Kashmir
       def clear(definition, instance)
         key = presenter_key(definition, instance)
         client.delete(key)
-      end
-
-      def client
-        @@client ||= Dalli::Client.new('localhost:11211', namespace: 'kashmir', compress: true)
       end
     end
   end
