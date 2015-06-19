@@ -5,7 +5,7 @@ describe 'Caching' do
   before(:all) do
 
     Kashmir.init(
-      caching_strategy: Kashmir::Caching::Memory
+      cache_client: Kashmir::Caching::Memory.new
     )
 
     TestData.create_tom
@@ -13,11 +13,11 @@ describe 'Caching' do
   end
 
   before(:each) do
-    Kashmir::Caching.flush!
+    Kashmir.caching.flush!
   end
 
   def from_cache(definition, model)
-    Kashmir::Caching.from_cache(definition, model)
+    Kashmir.caching.from_cache(definition, model)
   end
 
   describe 'flat data' do
@@ -87,7 +87,7 @@ describe 'Caching' do
       cached_rating = from_cache([:value], @restaurant.rating)
       assert_equal representation[:restaurant][:rating], cached_rating
 
-      assert_equal 3, Kashmir::Caching.keys.size
+      assert_equal 3, Kashmir.caching.keys.size
     end
 
     it 'tries to hit the cache at every level' do
@@ -108,9 +108,9 @@ describe 'Caching' do
     it 'tries to fill holes in the cache graph' do
       definition = [:name, :restaurant =>[ :name, :rating =>[ :value ]]]
       representation = @chef.represent(definition)
-      Kashmir::Caching.clear(definition, @chef)
+      Kashmir.caching.clear(definition, @chef)
 
-      assert_equal 2, Kashmir::Caching.keys.size
+      assert_equal 2, Kashmir.caching.keys.size
 
       @chef.reload
       selects = track_queries do
@@ -131,7 +131,7 @@ describe 'Caching' do
         presenter:AR::Recipe:2:[:title]
       )
 
-      assert_equal cached_keys, Kashmir::Caching.keys
+      assert_equal cached_keys, Kashmir.caching.keys
     end
 
     it 'presents from cache' do
@@ -157,7 +157,7 @@ describe 'Caching' do
         "presenter:AR::Recipe:2:[:title, {:ingredients=>[:name]}]"
       ]
 
-      assert_equal cache_keys, Kashmir::Caching.keys
+      assert_equal cache_keys, Kashmir.caching.keys
     end
   end
 
@@ -165,9 +165,9 @@ describe 'Caching' do
 
     it 'does not cache already cached results' do
       @restaurant.represent([:name])
-      assert_equal 1, Kashmir::Caching.keys.size
+      assert_equal 1, Kashmir.caching.keys.size
 
-      Kashmir::Caching.expects(:store_presenter).never
+      Kashmir.caching.expects(:store_presenter).never
       @restaurant.represent([:name])
     end
 
@@ -184,12 +184,12 @@ describe 'Caching' do
       end
 
       it 'does not include that field in the key' do
-        assert_equal %w(presenter:AR::Restaurant:1:[:name]), Kashmir::Caching.keys
+        assert_equal %w(presenter:AR::Restaurant:1:[:name]), Kashmir.caching.keys
       end
 
       it 'does not insert value in the cached results' do
-        assert_nil Kashmir::Caching.from_cache([:name, :current_customar_count], @restaurant)
-        assert_equal Kashmir::Caching.from_cache([:name], @restaurant), { name: 'Chef Tom Belly Burgers' }
+        assert_nil Kashmir.caching.from_cache([:name, :current_customar_count], @restaurant)
+        assert_equal Kashmir.caching.from_cache([:name], @restaurant), { name: 'Chef Tom Belly Burgers' }
       end
     end
 

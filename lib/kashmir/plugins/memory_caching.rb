@@ -2,7 +2,7 @@ require 'kashmir/extensions'
 
 module Kashmir
   module Caching
-    module Memory
+    class Memory
 
       def from_cache(definitions, instance)
         key = presenter_key(definitions, instance)

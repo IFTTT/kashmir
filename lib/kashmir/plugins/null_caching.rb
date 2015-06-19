@@ -2,7 +2,7 @@ require 'kashmir/extensions'
 
 module Kashmir
   module Caching
-    module Null
+    class Null
 
       def from_cache(definitions, instance)
         nil

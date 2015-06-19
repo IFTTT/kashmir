@@ -2,7 +2,13 @@ require 'dalli'
 
 module Kashmir
   module Caching
-    module Memcached
+    class Memcached
+
+      attr_reader :client
+
+      def initialize(client)
+        @client = client
+      end
 
       def from_cache(definitions, instance)
         key = presenter_key(definitions, instance)

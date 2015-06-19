@@ -2,7 +2,7 @@ module Kashmir
   module ArRelation
 
     def represent(representation_definition=[])
-      cached_presenters = Kashmir::Caching.bulk_from_cache(representation_definition, self)
+      cached_presenters = Kashmir.caching.bulk_from_cache(representation_definition, self)
 
       to_load = []
       self.zip(cached_presenters).each do |record, cached_presenter|

@@ -2,7 +2,7 @@ module Kashmir
   module Representable
 
     def represent(representation_definition=[])
-      if cacheable? and cached_presenter = Kashmir::Caching.from_cache(representation_definition, self)
+      if cacheable? and cached_presenter = Kashmir.caching.from_cache(representation_definition, self)
         return cached_presenter
       end
 
@@ -32,7 +32,7 @@ module Kashmir
         representation.delete(field_name)
       end
 
-      Kashmir::Caching.store_presenter(representation_definition, representation, self)
+      Kashmir.caching.store_presenter(representation_definition, representation, self)
     end
 
     def cache_black_list

@@ -4,6 +4,5 @@ require 'kashmir/plugins/memcached_caching'
 
 module Kashmir
   module Caching
-    extend Kashmir::Caching::Null
   end
 end

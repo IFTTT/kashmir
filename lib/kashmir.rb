@@ -18,8 +18,12 @@ module Kashmir
   end
 
   def self.init(options={})
-    if strategy = options[:caching_strategy]
-      Kashmir::Caching.extend(strategy)
+    if client = options[:cache_client]
+      @@caching = client
     end
+  end
+
+  def self.caching
+    @@caching ||= Kashmir::Caching::Null.new
   end
 end
