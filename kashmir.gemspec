@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency "activerecord", "~>3.2.8"
   spec.add_runtime_dependency "dalli"
+  spec.add_runtime_dependency "colorize"
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
