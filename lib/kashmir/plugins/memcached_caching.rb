@@ -6,8 +6,9 @@ module Kashmir
 
       attr_reader :client
 
-      def initialize(client)
+      def initialize(client, default_ttl = 3600)
         @client = client
+        @default_ttl = default_ttl
       end
 
       def from_cache(definitions, instance)
@@ -43,7 +44,7 @@ module Kashmir
       end
 
       def set(key, value)
-        client.set(key, value.to_json)
+        client.set(key, value.to_json, @default_ttl)
       end
 
       def clear(definition, instance)
