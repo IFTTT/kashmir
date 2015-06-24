@@ -1,8 +1,8 @@
 module Kashmir
   module Representable
 
-    def represent(representation_definition=[])
-      if cacheable? and cached_presenter = Kashmir::Caching.from_cache(representation_definition, self)
+    def represent(representation_definition=[], level=0, skip_cache=false)
+      if !skip_cache && cacheable? and cached_presenter = Kashmir::Caching.from_cache(representation_definition, self)
         return cached_presenter
       end
 
@@ -15,16 +15,18 @@ module Kashmir
           raise "#{self.class.to_s}##{key} is not defined as a representation"
         end
 
-        represented_document = self.class.definitions[key].run_for(self, arguments)
+        represented_document = self.class.definitions[key].run_for(self, arguments, level)
         representation = representation.merge(represented_document)
       end
 
-      cache!(representation_definition.dup, representation.dup)
+      if !skip_cache
+        cache!(representation_definition.dup, representation.dup, level)
+      end
 
       representation
     end
 
-    def cache!(representation_definition, representation)
+    def cache!(representation_definition, representation, level=0)
       return unless cacheable?
 
       (cache_black_list & representation_definition).each do |field_name|
@@ -32,7 +34,7 @@ module Kashmir
         representation.delete(field_name)
       end
 
-      Kashmir::Caching.store_presenter(representation_definition, representation, self)
+      Kashmir::Caching.store_presenter(representation_definition, representation, self, level * 60)
     end
 
     def cache_black_list

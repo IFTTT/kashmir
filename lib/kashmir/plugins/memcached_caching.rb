@@ -21,16 +21,25 @@ module Kashmir
       def bulk_from_cache(definitions, instances)
         keys = instances.map do |instance|
           presenter_key(definitions, instance) if instance.respond_to?(:id)
-        end
+        end.compact
 
-        keys.map do |key|
-          get(key)
+        client.get_multi(keys).values.map do |value|
+          JSON.parse(value, symbolize_names: true)
         end
       end
 
-      def store_presenter(definitions, representation, instance)
+      def bulk_write(definitions, representations, instances, ttl)
+        client.multi do
+          instances.each_with_index do |instance, index|
+            key = presenter_key(definitions, instance)
+            set(key, representations[index], ttl)
+          end
+        end
+      end
+
+      def store_presenter(definitions, representation, instance, ttl=0)
         key = presenter_key(definitions, instance)
-        set(key, representation)
+        set(key, representation, ttl)
       end
 
       def presenter_key(definition_name, instance)
@@ -43,8 +52,8 @@ module Kashmir
         end
       end
 
-      def set(key, value)
-        client.set(key, value.to_json, @default_ttl)
+      def set(key, value, ttl=nil)
+        client.set(key, value.to_json, ttl || @default_ttl)
       end
 
       def clear(definition, instance)

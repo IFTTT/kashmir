@@ -20,9 +20,21 @@ module Kashmir
       cached_representation
     end
 
-    def store_presenter(representation_definition, representation, object)
-      log("#{"write".blue}: #{log_key(object, representation_definition)}", :debug)
-      Kashmir.caching.store_presenter(representation_definition, representation, object)
+    def bulk_from_cache(representation_definition, objects)
+      class_name = objects.size > 0 ? objects.first.class.to_s : ''
+      log("#{"read_multi".blue}: [#{objects.size}]#{class_name} : #{representation_definition}", :debug)
+      Kashmir.caching.bulk_from_cache(representation_definition, objects)
+    end
+
+    def store_presenter(representation_definition, representation, object, ttl)
+      log("#{"write".blue} TTL: #{ttl}: #{log_key(object, representation_definition)}", :debug)
+      Kashmir.caching.store_presenter(representation_definition, representation, object, ttl)
+    end
+
+    def bulk_write(representation_definition, representations, objects, ttl)
+      class_name = objects.size > 0 ? objects.first.class.to_s : ''
+      log("#{"write_multi".blue}: TTL: #{ttl}: [#{objects.size}]#{class_name} : #{representation_definition}", :debug)
+      Kashmir.caching.bulk_write(representation_definition, representations, objects, ttl)
     end
 
     def log_key(object, representation_definition)
@@ -33,6 +45,6 @@ module Kashmir
       Kashmir.logger.send(level, ("\n#{"Kashmir::Caching".magenta} #{message}\n"))
     end
 
-    module_function :from_cache, :store_presenter, :log_key, :log
+    module_function :from_cache, :bulk_from_cache, :bulk_write, :store_presenter, :log_key, :log
   end
 end

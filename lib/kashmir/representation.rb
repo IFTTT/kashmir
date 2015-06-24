@@ -8,7 +8,7 @@ module Kashmir
       @options = options
     end
 
-    def run_for(instance, arguments)
+    def run_for(instance, arguments, level=0)
       representation = {}
       instance_vars = instance.instance_variables
 
@@ -19,7 +19,7 @@ module Kashmir
         if value.is_a?(Hash)
           representation[@field] = new_hash
         else
-          representation[@field] = present_value(value, arguments)
+          representation[@field] = present_value(value, arguments, level)
         end
       end
 
@@ -38,32 +38,51 @@ module Kashmir
       true
     end
 
-    def present_value(value, arguments)
+    def present_value(value, arguments, level=0, skip_cache=false)
 
       if value.is_a?(Kashmir)
-        return value.represent(arguments)
+        return value.represent(arguments, level + 1, skip_cache)
       end
 
       if value.is_a?(Hash)
-        return present_hash(value, arguments)
+        return present_hash(value, arguments, level + 1, skip_cache)
       end
 
       if value.is_a?(Array)
-        return value.map do |element|
-          if primitive?(element)
-            element
-          else
-            present_value(element, arguments)
-          end
-        end
+        return present_array(value, arguments, level + 1, skip_cache)
       end
 
       if value.respond_to?(:represent)
-        return value.represent(arguments)
+        return value.represent(arguments, skip_cache)
       end
     end
 
-    def present_hash(value, arguments)
+    def present_array(value, arguments, level=0, skip_cache=false)
+      cached_presenters = Kashmir::Caching.bulk_from_cache(arguments, value)
+
+      uncached = []
+      value.zip(cached_presenters).each do |record, cached_presenter|
+        if cached_presenter.nil?
+          uncached << record
+        end
+      end
+
+      uncached_representations = uncached.map do |element|
+        if primitive?(element)
+          element
+        else
+          present_value(element, arguments, level, true)
+        end
+      end
+
+      if rep = uncached.first and rep.is_a?(Kashmir) and rep.cacheable?
+        Kashmir::Caching.bulk_write(arguments, uncached_representations, uncached, level * 60)
+      end
+
+      cached_presenters.compact + uncached_representations
+    end
+
+    def present_hash(value, arguments, level=0, skip_cache=false)
       new_hash = {}
       value.each_pair do |key, value|
         args = if arguments.is_a?(Hash)
@@ -78,7 +97,7 @@ module Kashmir
 
                  arg
                end
-        new_hash[key] = primitive?(value) ? value : present_value(value, args || [])
+        new_hash[key] = primitive?(value) ? value : present_value(value, args || [], level, skip_cache)
       end
       new_hash
     end

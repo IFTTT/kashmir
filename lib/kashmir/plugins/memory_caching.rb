@@ -21,9 +21,15 @@ module Kashmir
         end
       end
 
-      def store_presenter(definitions, representation, instance, black_list=[])
+      def store_presenter(definitions, representation, instance, ttl=0)
         key = presenter_key(definitions, instance)
         set(key, representation)
+      end
+
+      def bulk_write(definitions, representations, objects, ttl)
+        objects.each_with_index do |instance, index|
+          store_presenter(definitions, representations[index], instance, ttl)
+        end
       end
 
       def presenter_key(definition_name, instance)

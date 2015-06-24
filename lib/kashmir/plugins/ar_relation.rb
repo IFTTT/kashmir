@@ -1,8 +1,8 @@
 module Kashmir
   module ArRelation
 
-    def represent(representation_definition=[])
-      cached_presenters = Kashmir.caching.bulk_from_cache(representation_definition, self)
+    def represent(representation_definition=[], level=0, skip_cache=false)
+      cached_presenters = Kashmir::Caching.bulk_from_cache(representation_definition, self)
 
       to_load = []
       self.zip(cached_presenters).each do |record, cached_presenter|
@@ -15,11 +15,15 @@ module Kashmir
         ActiveRecord::Associations::Preloader.new(to_load, representation_definition).run
       end
 
-      to_load.map! do |subject|
-        subject.represent(representation_definition) if subject.respond_to?(:represent)
+      to_load_representations = to_load.map do |subject|
+        subject.represent(representation_definition, level, skip_cache) if subject.respond_to?(:represent)
       end
 
-      cached_presenters.compact + to_load
+      if rep = to_load.first and rep.is_a?(Kashmir) and rep.cacheable?
+        Kashmir::Caching.bulk_write(representation_definition, to_load_representations, to_load, level * 60)
+      end
+
+      cached_presenters.compact + to_load_representations
     end
 
     def represent_with(&block)

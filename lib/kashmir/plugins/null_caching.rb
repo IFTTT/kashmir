@@ -12,7 +12,10 @@ module Kashmir
         []
       end
 
-      def store_presenter(definitions, representation, instance, black_list=[])
+      def store_presenter(definitions, representation, instance, black_list=[], ttl=0)
+      end
+
+      def bulk_write(representation_definition, representations, objects, ttl)
       end
 
       def presenter_key(definition_name, instance)
