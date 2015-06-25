@@ -8,7 +8,7 @@ module Kashmir
       @options = options
     end
 
-    def run_for(instance, arguments, level=0)
+    def run_for(instance, arguments, level=1)
       representation = {}
       instance_vars = instance.instance_variables
 
@@ -38,7 +38,7 @@ module Kashmir
       true
     end
 
-    def present_value(value, arguments, level=0, skip_cache=false)
+    def present_value(value, arguments, level=1, skip_cache=false)
 
       if value.is_a?(Kashmir)
         return value.represent(arguments, level + 1, skip_cache)
@@ -57,7 +57,7 @@ module Kashmir
       end
     end
 
-    def present_array(value, arguments, level=0, skip_cache=false)
+    def present_array(value, arguments, level=1, skip_cache=false)
       cached_presenters = Kashmir::Caching.bulk_from_cache(arguments, value)
 
       uncached = []
@@ -82,7 +82,7 @@ module Kashmir
       cached_presenters.compact + uncached_representations
     end
 
-    def present_hash(value, arguments, level=0, skip_cache=false)
+    def present_hash(value, arguments, level=1, skip_cache=false)
       new_hash = {}
       value.each_pair do |key, value|
         args = if arguments.is_a?(Hash)

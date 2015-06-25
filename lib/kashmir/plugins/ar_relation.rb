@@ -1,7 +1,7 @@
 module Kashmir
   module ArRelation
 
-    def represent(representation_definition=[], level=0, skip_cache=false)
+    def represent(representation_definition=[], level=1, skip_cache=false)
       cached_presenters = Kashmir::Caching.bulk_from_cache(representation_definition, self)
 
       to_load = []

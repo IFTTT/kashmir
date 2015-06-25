@@ -1,7 +1,7 @@
 module Kashmir
   module Representable
 
-    def represent(representation_definition=[], level=0, skip_cache=false)
+    def represent(representation_definition=[], level=1, skip_cache=false)
       if !skip_cache && cacheable? and cached_presenter = Kashmir::Caching.from_cache(representation_definition, self)
         return cached_presenter
       end
@@ -26,7 +26,7 @@ module Kashmir
       representation
     end
 
-    def cache!(representation_definition, representation, level=0)
+    def cache!(representation_definition, representation, level=1)
       return unless cacheable?
 
       (cache_black_list & representation_definition).each do |field_name|
