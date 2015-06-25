@@ -23,9 +23,27 @@ module Kashmir
           presenter_key(definitions, instance) if instance.respond_to?(:id)
         end.compact
 
-        client.get_multi(keys).values.map do |value|
-          JSON.parse(value, symbolize_names: true)
+
+        # TODO improve this
+        # Creates a hash with all the keys (sorted by the array sort order)
+        # and points everything to null
+        # ex: [a, b, c] -> { a: nil, b: nil, c: nil }
+        results = Hash[keys.map {|x| [x, nil]}]
+
+        # Get results from memcached
+        # This will ONLY return cache hits as a Hash
+        # ex: { a: cached_a, b: cached_b } note that C is not here
+        from_cache = client.get_multi(keys)
+
+        # This assigns each one of the cached values to its keys
+        # preserving cache misses (that still point to nil)
+        from_cache.each_pair do |key, value|
+          results[key] = JSON.parse(value, symbolize_names: true)
         end
+
+        # returns the cached results in the same order as requested.
+        # this will also return nil values for cache misses
+        results.values
       end
 
       def bulk_write(definitions, representations, instances, ttl)
