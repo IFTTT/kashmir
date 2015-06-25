@@ -2,9 +2,7 @@ PATH
   remote: .
   specs:
     kashmir (0.0.1)
-      activerecord (~> 3.2.8)
       colorize
-      dalli
 
 GEM
   remote: https://rubygems.org/
@@ -47,8 +45,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  activerecord (~> 3.2.8)
   bundler (~> 1.7)
   byebug
+  dalli
   kashmir!
   minitest
   minitest-ansi

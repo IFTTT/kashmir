@@ -21,8 +21,6 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "activerecord", "~>3.2.8"
-  spec.add_runtime_dependency "dalli"
   spec.add_runtime_dependency "colorize"
 
   spec.add_development_dependency "bundler", "~> 1.7"
@@ -33,4 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "byebug"
   spec.add_development_dependency "minitest-around"
   spec.add_development_dependency "mocha"
+
+  spec.add_development_dependency "dalli"
+  spec.add_development_dependency "activerecord", "~>3.2.8"
 end
