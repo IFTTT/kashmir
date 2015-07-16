@@ -508,8 +508,49 @@ SELECT "recipes".* FROM "recipes" WHERE "recipes"."chef_id" IN (1, 2)
 
 For more examples, check out: https://github.com/IFTTT/kashmir/blob/master/test/activerecord_tricks_test.rb
 
-### `Kashmir::Caching`
-TODO: write description
+### `Kashmir::Caching` (Experimental)
+Caching is the best feature in Kashmir.
+The `Kashmir::Caching` module will cache every level of the dependency tree Kashmir generates when representing an object.
+
+![Dependency Tree](http://imageshack.com/a/img661/6152/LAGBwO.png "Dependency Tree")
+
+As you can see in the image above, Kashmir will build a dependency tree of the representation.
+If you have Caching on, Kashmir will:
+
+- Build a cache key for each individual object (green)
+- Wrap complex dependencies into their on cache key (blue and pink)
+- Wrap the whole representation into one unique cache key (red)
+
+Each layer gets its own cache keys which can be expired at different times.
+Kashmir will also be able to fill in blanks in the dependency tree and fetch missing objects individually.
+
+Caching is turned off by default, but you can use one of the two available implementations.
+
+- [In Memory Caching] https://github.com/IFTTT/kashmir/blob/master/lib/kashmir/plugins/memory_caching.rb
+- [Memcached] https://github.com/IFTTT/kashmir/blob/master/lib/kashmir/plugins/memcached_caching.rb (Currently used on ifttt.com).
+
+You can also build your own custom caching engine by following the `NullCaching` protocol available at:
+https://github.com/IFTTT/kashmir/blob/master/lib/kashmir/plugins/null_caching.rb
+
+#### Enabling `Kashmir::Caching`
+##### In Memory
+```ruby
+Kashmir.init(
+  cache_client: Kashmir::Caching::Memory.new
+)
+```
+
+##### With Memcached
+```ruby
+client = Dalli::Client.new(url, namespace: 'kashmir', compress: true)
+default_ttl = 5.minutes
+
+Kashmir.init(
+  cache_client: Kashmir::Caching::Memcached.new(client, default_ttl)
+)
+```
+
+For more advanced examples, check out: https://github.com/IFTTT/kashmir/blob/master/test/caching_test.rb
 
 ## Contributing
 
@@ -518,4 +559,5 @@ TODO: write description
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create a new Pull Request
+
 
