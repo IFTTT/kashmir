@@ -440,7 +440,74 @@ Inline representations can become lengthy and confusing over time.
 If you find yourself nesting more than two levels or including more than 3 or 4 fields per level consider creating Representers with `Kashmir::Dsl`.
 
 ### `Kashmir::ActiveRecord`
-TODO: write description
+Kashmir works just as well with ActiveRecord. `ActiveRecord::Relation`s can be used as Kashmir representations just as any other classes.
+
+Kashmir will attempt to preload every `ActiveRecord::Relation` defined as representations automatically by using `ActiveRecord::Associations::Preloader`. This will guarantee that you don't run into N+1 queries while representing collections and dependent objects.
+
+Here's an example of how Kashmir will attempt to optimize database queries:
+
+```ruby
+ActiveRecord::Schema.define do
+  create_table :recipes, force: true do |t|
+    t.column :title, :string
+    t.column :num_steps, :integer
+    t.column :chef_id, :integer
+  end
+  
+  create_table :chefs, force: true do |t|
+    t.column :name, :string
+  end
+end
+```
+```ruby
+module AR
+  class Recipe < ActiveRecord::Base
+    include Kashmir
+
+    belongs_to :chef
+
+    representations do
+      rep :title
+      rep :chef
+    end
+  end
+
+  class Chef < ActiveRecord::Base
+    include Kashmir
+
+    has_many :recipes
+
+    representations do
+      rep :name
+      rep :recipes
+    end
+  end
+end
+```
+
+```ruby
+AR::Chef.all.each do |chef|
+  chef.recipes.to_a
+end
+```
+will generate
+```sql
+SELECT * FROM chefs
+SELECT "recipes".* FROM "recipes" WHERE "recipes"."chef_id" = ?
+SELECT "recipes".* FROM "recipes" WHERE "recipes"."chef_id" = ?
+```
+
+With Kashmir:
+```ruby
+AR::Chef.all.represent([:recipes])
+```
+```sql
+SELECT "chefs".* FROM "chefs"
+SELECT "recipes".* FROM "recipes" WHERE "recipes"."chef_id" IN (1, 2)
+```
+
+For more examples, check out: https://github.com/IFTTT/kashmir/blob/master/test/activerecord_tricks_test.rb
+
 ### `Kashmir::Caching`
 TODO: write description
 
