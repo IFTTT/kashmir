@@ -13,7 +13,7 @@ Gem::Specification.new do |spec|
     Kashmir helps you easily define decorators/representers/presenters for ruby objects.
     Optionally, Kashmir will also cache these views for faster lookups.
   }
-  spec.homepage      = ""
+  spec.homepage      = "http://ifttt.github.io/"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
@@ -27,9 +27,9 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "minitest", "~> 5.0"
   spec.add_development_dependency "minitest-around", "~> 0.3"
-  spec.add_development_dependency "mocha", "~> 1.1.0"
+  spec.add_development_dependency "mocha", "~> 1.1"
   spec.add_development_dependency "sqlite3", "1.3.10"
 
   spec.add_development_dependency "dalli", "~> 2.7"
-  spec.add_development_dependency "activerecord", "~> 3.2.8"
+  spec.add_development_dependency "activerecord", "3.2.8"
 end
