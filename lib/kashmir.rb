@@ -14,10 +14,10 @@ module Kashmir
 
     def included(klass)
       klass.extend Representable::ClassMethods
-      klass.include Representable
+      klass.send(:include, Representable)
 
       if klass.ancestors.include?(::ActiveRecord::Base)
-        klass.include Kashmir::AR
+        klass.send(:include, Kashmir::AR)
       end
     end
 
