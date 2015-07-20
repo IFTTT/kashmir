@@ -6,8 +6,8 @@ require 'kashmir/version'
 Gem::Specification.new do |spec|
   spec.name          = "kashmir"
   spec.version       = Kashmir::VERSION
-  spec.authors       = ["Netto Farah"]
-  spec.email         = ["nettofarah@gmail.com"]
+  spec.authors       = ["IFTTT", "Netto Farah"]
+  spec.email         = ["ops@ifttt.com", "nettofarah@gmail.com"]
   spec.summary       = %q{Kashmir is a DSL for quickly defining contracts to decorate your models.}
   spec.description   = %q{
     Kashmir helps you easily define decorators/representers/presenters for ruby objects.
