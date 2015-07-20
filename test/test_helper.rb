@@ -1,7 +1,6 @@
-require 'byebug'
 require 'minitest/autorun'
-require 'minitest/ansi'
-require 'mocha/mini_test'
+require 'mocha/test_unit'
+require 'logger'
 
 require 'kashmir'
 

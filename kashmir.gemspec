@@ -25,13 +25,11 @@ Gem::Specification.new do |spec|
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "minitest"
-  spec.add_development_dependency "minitest-ansi"
-  spec.add_development_dependency "sqlite3"
-  spec.add_development_dependency "byebug"
-  spec.add_development_dependency "minitest-around"
-  spec.add_development_dependency "mocha"
+  spec.add_development_dependency "minitest", "~> 5.0"
+  spec.add_development_dependency "minitest-around", "~> 0.3"
+  spec.add_development_dependency "mocha", "~> 1.1.0"
+  spec.add_development_dependency "sqlite3", "1.3.10"
 
-  spec.add_development_dependency "dalli"
-  spec.add_development_dependency "activerecord", "~>3.2.8"
+  spec.add_development_dependency "dalli", "~> 2.7"
+  spec.add_development_dependency "activerecord", "~> 3.2.8"
 end
