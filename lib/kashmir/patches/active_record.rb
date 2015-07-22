@@ -1,8 +1,8 @@
 # We have to reopen Preloader to allow for it
 # to accept any random attribute name as a preloadable association.
 #
-# This allows us to send any abirtrary Hash to Preloader.
-# Not only keys that we know are ActiveRecord relations in advance.
+# This allows us to send any arbitrary Hash to Preloader, without
+# requiring it to be an ActiveRecord relation in advance.
 #
 
 module ArV4Patch
