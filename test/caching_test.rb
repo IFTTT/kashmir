@@ -12,6 +12,12 @@ describe 'Caching' do
     @restaurant = AR::Restaurant.find_by_name('Chef Tom Belly Burgers')
   end
 
+  after(:all) do
+    Kashmir.init(
+      cache_client: Kashmir::Caching::Null.new
+    )
+  end
+
   before(:each) do
     Kashmir.caching.flush!
   end
