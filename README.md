@@ -1,4 +1,4 @@
-# Kashmir
+![Kashmir](https://raw.githubusercontent.com/IFTTT/kashmir/images/images/kashmirbanner.jpg?token=AAIf5wn0aFvxx1oNOO6GVw7SO4vENFW4ks5VuSaLwA%3D%3D "Kashmir")
 
 Kashmir is a DSL built to allow developers to describe representations of Ruby objects.
 Kashmir will turn these Ruby objects into hashes that represent the dependency tree you just described.
@@ -514,7 +514,7 @@ For more examples, check out: https://github.com/IFTTT/kashmir/blob/master/test/
 Caching is the best feature in Kashmir.
 The `Kashmir::Caching` module will cache every level of the dependency tree Kashmir generates when representing an object.
 
-![Dependency Tree](/../screenshots/screenshots/kashmir.png?raw=true "Dependency Tree")
+![Dependency Tree](https://raw.githubusercontent.com/IFTTT/kashmir/images/images/kashmir.png?token=AAIf57rtAVfFPENYmWfBJ9nhZOmbFs1qks5VuVFOwA%3D%3D "Dependency Tree")
 
 As you can see in the image above, Kashmir will build a dependency tree of the representation.
 If you have Caching on, Kashmir will:
