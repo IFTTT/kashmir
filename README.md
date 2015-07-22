@@ -1,18 +1,18 @@
 # Kashmir
 
-Kashmir is a DSL built to allow developers to describe representations of their ruby objects.
-Kashmir will turn these ruby objects into `Hash`es that represent the dependency tree you just described.
+Kashmir is a DSL built to allow developers to describe representations of Ruby objects.
+Kashmir will turn these Ruby objects into hashes that represent the dependency tree you just described.
 
-`Kashmir::ActiveRecord` will also optimize and try to balance `ActiveRecord` queries, so your application hits the database as little as possible.
+`Kashmir::ActiveRecord` will also optimize and try to balance `ActiveRecord` queries so your application hits the database as little as possible.
 
-`Kashmir::Caching` builds a dependency tree for complex object representations and caches each level of this tree separately. Kashmir will do so by creating cache views of each one of these layers, but also caching a complete tree.
-The caching engine is smart enough to fill out holes in the cache tree with fresh data from your database or another sort of data store.
+`Kashmir::Caching` builds a dependency tree for complex object representations and caches each level of this tree separately. Kashmir will do so by creating cache views of each level as well as caching a complete tree.
+The caching engine is smart enough to fill holes in the cache tree with fresh data from your data store.
 
 Combine `Kashmir::Caching` + `Kashmir::ActiveRecord` for extra awesomeness.
 
 ### Example:
 
-For example, a `Person` with a `name` and `age`:
+For example, a `Person` with `name` and `age` attributes:
 ```ruby
   class Person
     include Kashmir
@@ -34,18 +34,21 @@ could be represented as:
 ```
 
 Representing an object is as simple as:
-1. add `include Kashmir` to the target class
-2. whitelist all the fields you may want in a representation.
+
+1. Add `include Kashmir` to the target class.
+2. Whitelist all the fields you want to include in a representation.
+
 ```ruby
-# add all the fields, methods you want to be visible to Kashmir
+# Add fields and methods you want to be visible to Kashmir
 representations do
-  rep(:name) # this exposes the property name to Kashmir
+  rep(:name)
   rep(:age)
 end
 ```
+
 3. Instantiate an object and `#represent` it.
 ```ruby
-# you can pass in an array with all the fields you want to be represented
+# Pass in an array with all the fields you want included
 Person.new('Netto Farah', 26).represent([:name, :age]) 
  => {:name=>"Netto Farah", :age=>"26"} 
 ```
@@ -65,11 +68,11 @@ And then execute:
 ## Usage
 Kashmir is better described with examples.
 
-### Basic representations
+### Basic Representations
 
-#### Describing an object
+#### Describing an Object
 Only whitelisted fields can be represented by Kashmir.
-This is done so secret fields don't get exposed to clients, such as passwords and salts.
+This is done so sensitive fields (like passwords) cannot be accidentally exposed to clients.
 
 ``` ruby
 class Recipe < OpenStruct
@@ -84,17 +87,17 @@ end
 
 Instantiate a `Recipe`:
 ```ruby
-recipe = Recipe.new(title: 'Beef stew', preparation_time: 60)
+recipe = Recipe.new(title: 'Beef Stew', preparation_time: 60)
 ```
 
-Kashmir automatically adds a `#represent` method to every instance of `Recipe` now.
-`#represent` will take an `Array` with all the fields you want as part of your representation.
+Kashmir automatically adds a `#represent` method to every instance of `Recipe`.
+`#represent` takes an `Array` with all the fields you want as part of your representation.
 
 ```ruby
 recipe.represent([:title, :preparation_time])
-=> { title: 'Beef stew', preparation_time: 60 }
+=> { title: 'Beef Stew', preparation_time: 60 }
 ```
-#### Calculated fields
+#### Calculated Fields
 You can represent any instance variable or method (basically anything that returns `true` for `respond_to?`).
 ``` ruby
 class Recipe < OpenStruct
@@ -112,11 +115,11 @@ end
 ```
 
 ```ruby
-Recipe.new(title: 'Beef stew', steps: ['chop', 'cook']).represent([:title, :num_steps])
-=> { title: 'Beef stew', num_steps: 2 }
+Recipe.new(title: 'Beef Stew', steps: ['chop', 'cook']).represent([:title, :num_steps])
+=> { title: 'Beef Stew', num_steps: 2 }
 ```
 
-### Nested representations
+### Nested Representations
 You can nest Kashmir objects to represent complex relationships between your objects.
 ```ruby
 class Recipe < OpenStruct
@@ -137,8 +140,7 @@ class Chef < OpenStruct
 end
 ```
 
-Nested representations can be described as hashes inside your array of fields.
-You can then pass in another array with all the properties you want to present in the nested object.
+When you create a representation, nest hashes to create nested representations.
 ```ruby
 netto = Chef.new(name: 'Netto Farah')
 beef_stew = Recipe.new(title: 'Beef Stew', chef: netto)
@@ -153,8 +155,8 @@ beef_stew.represent([:title, { :chef => [ :name ] }])
 ```
 Not happy with this syntax? Check out `Kashmir::DSL` or `Kashmir::InlineDSL` for prettier code.
 
-#### Base representations
-Tired of repeating the same fields over and over?
+#### Base Representations
+Are you tired of repeating the same fields over and over?
 You can create a base representation of your objects, so Kashmir returns basic fields automatically.
 ```ruby
 class Recipe
@@ -207,7 +209,7 @@ end
 ```
 
 ```ruby
-bbq_joint = Restaurant.new(name: "Netto's BBQ Joint", rating: '5 stars')
+bbq_joint = Restaurant.new(name: "Netto's BBQ Joint", rating: '5 Stars')
 netto = Chef.new(name: 'Netto', restaurant: bbq_joint)
 brisket = Recipe.new(title: 'BBQ Brisket', chef: netto)
 
@@ -223,7 +225,7 @@ brisket.represent([
     name: 'Netto',
     restaurant: {
       name: "Netto's BBQ Joint",
-      rating: '5 stars'
+      rating: '5 Stars'
     }
   }
 }
@@ -310,7 +312,7 @@ brisket.represent(RecipePresenter)
 
 =>  { title: 'BBQ Brisket', num_steps: 2 }
 ```
-#### Embed Representers
+#### Embedded Representers
 It is also possible to define nested representers with `embed(:property_name, RepresenterClass)`.
 
 ```ruby
@@ -388,7 +390,7 @@ end
 => { title: 'BBQ Brisket', num_steps: 2 }
 ```
 
-#### Nested inline representations
+#### Nested Inline Representations
 You can nest inline representations using `inline(:field, &block)` the same way we did with `Kashmir::Dsl`.
 
 ```ruby
@@ -527,7 +529,7 @@ Kashmir will also be able to fill in blanks in the dependency tree and fetch mis
 Caching is turned off by default, but you can use one of the two available implementations.
 
 - [In Memory Caching] https://github.com/IFTTT/kashmir/blob/master/lib/kashmir/plugins/memory_caching.rb
-- [Memcached] https://github.com/IFTTT/kashmir/blob/master/lib/kashmir/plugins/memcached_caching.rb (Currently used on ifttt.com).
+- [Memcached] https://github.com/IFTTT/kashmir/blob/master/lib/kashmir/plugins/memcached_caching.rb
 
 You can also build your own custom caching engine by following the `NullCaching` protocol available at:
 https://github.com/IFTTT/kashmir/blob/master/lib/kashmir/plugins/null_caching.rb
