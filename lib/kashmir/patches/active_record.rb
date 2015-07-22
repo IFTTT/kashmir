@@ -26,6 +26,8 @@ module ArV4Patch
       klasses = h[assoc.reflection] ||= {}
       (klasses[assoc.klass] ||= []) << record
     end
+
+    h.delete(nil)
     h
   end
 end

@@ -12,7 +12,11 @@ module Kashmir
       end
 
       if to_load.any?
-        ActiveRecord::Associations::Preloader.new(to_load, representation_definition).run
+        if ActiveRecord::VERSION::STRING >= "4.0.2"
+          ActiveRecord::Associations::Preloader.new.preload(to_load, representation_definition)
+        else
+          ActiveRecord::Associations::Preloader.new(to_load, representation_definition).run
+        end
       end
 
       to_load_representations = to_load.map do |subject|

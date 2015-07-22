@@ -1,6 +1,5 @@
 require 'kashmir/plugins/memory_caching'
 require 'kashmir/plugins/null_caching'
-require 'kashmir/plugins/memcached_caching'
 require 'colorize'
 
 module Kashmir
@@ -21,8 +20,8 @@ module Kashmir
     end
 
     def bulk_from_cache(representation_definition, objects)
-      class_name = objects.size > 0 ? objects.first.class.to_s : ''
-      log("#{"read_multi".blue}: [#{objects.size}]#{class_name} : #{representation_definition}", :debug)
+      class_name = objects.length > 0 ? objects.first.class.to_s : ''
+      log("#{"read_multi".blue}: [#{objects.length}]#{class_name} : #{representation_definition}", :debug)
       Kashmir.caching.bulk_from_cache(representation_definition, objects)
     end
 
@@ -32,8 +31,8 @@ module Kashmir
     end
 
     def bulk_write(representation_definition, representations, objects, ttl)
-      class_name = objects.size > 0 ? objects.first.class.to_s : ''
-      log("#{"write_multi".blue}: TTL: #{ttl}: [#{objects.size}]#{class_name} : #{representation_definition}", :debug)
+      class_name = objects.length > 0 ? objects.first.class.to_s : ''
+      log("#{"write_multi".blue}: TTL: #{ttl}: [#{objects.length}]#{class_name} : #{representation_definition}", :debug)
       Kashmir.caching.bulk_write(representation_definition, representations, objects, ttl)
     end
 
