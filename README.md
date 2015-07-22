@@ -514,7 +514,7 @@ For more examples, check out: https://github.com/IFTTT/kashmir/blob/master/test/
 Caching is the best feature in Kashmir.
 The `Kashmir::Caching` module will cache every level of the dependency tree Kashmir generates when representing an object.
 
-![Dependency Tree](http://imageshack.com/a/img661/6152/LAGBwO.png "Dependency Tree")
+![Dependency Tree](https://raw.githubusercontent.com/IFTTT/kashmir/screenshots/screenshots/kashmir.png?token=AAQhYDZTL7oXvpg_XICV4Hs_oDsbOXaLks5VuQVKwA%3D%3D "Dependency Tree")
 
 As you can see in the image above, Kashmir will build a dependency tree of the representation.
 If you have Caching on, Kashmir will:
