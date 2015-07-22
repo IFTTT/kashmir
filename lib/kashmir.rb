@@ -5,6 +5,7 @@ require "kashmir/inline_dsl"
 require "kashmir/plugins/ar"
 require "kashmir/caching"
 require "kashmir/representable"
+require 'logger'
 
 module Kashmir
 
