@@ -544,6 +544,8 @@ Kashmir.init(
 
 ##### With Memcached
 ```ruby
+require 'kashmir/plugins/memcached_caching'
+
 client = Dalli::Client.new(url, namespace: 'kashmir', compress: true)
 default_ttl = 5.minutes
 
