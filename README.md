@@ -2,8 +2,9 @@
 
 ![Kashmir](https://raw.githubusercontent.com/IFTTT/kashmir/images/images/kashmirbanner.jpg?token=AAIf5wn0aFvxx1oNOO6GVw7SO4vENFW4ks5VuSaLwA%3D%3D "Kashmir")
 
-Kashmir is a DSL built to allow developers to describe representations of Ruby objects.
-Kashmir will turn these Ruby objects into hashes that represent the dependency tree you just described.
+Kashmir is a Ruby DSL that makes serializing and caching objects a snap.
+
+Kashmir allows you to describe representations of Ruby objects. It will generate hashes from these Ruby objects using the representation and dependency tree that you specify.
 
 `Kashmir::ActiveRecord` will also optimize and try to balance `ActiveRecord` queries so your application hits the database as little as possible.
 
