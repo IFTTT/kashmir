@@ -1,4 +1,4 @@
-[![Open Source at IFTTT](https://raw.githubusercontent.com/IFTTT/ifttt.github.io/master/images/open-source-ifttt.png?token=AAIf54LjP9-qb4capZFQSIXG8lc58_7Cks5VuVR3wA%3D%3D)](http://ifttt.github.io)
+[![Open Source at IFTTT](http://ifttt.github.io/images/open-source-ifttt.svg)](http://ifttt.github.io)
 
 ![Kashmir](https://raw.githubusercontent.com/IFTTT/kashmir/images/images/kashmirbanner.jpg?token=AAIf5wn0aFvxx1oNOO6GVw7SO4vENFW4ks5VuSaLwA%3D%3D "Kashmir")
 
