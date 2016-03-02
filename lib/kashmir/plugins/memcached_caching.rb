@@ -1,5 +1,3 @@
-require 'dalli'
-
 module Kashmir
   module Caching
     class Memcached
