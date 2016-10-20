@@ -111,7 +111,9 @@ module Kashmir
     end
 
     def primitive?(field_value)
-      [Fixnum, String, Date, Time, TrueClass, FalseClass, Symbol].include?(field_value.class)
+      [Fixnum, String, Date, Time, TrueClass, FalseClass, Symbol].any? do |type|
+        field_value.is_a?(type)
+      end
     end
   end
 end
