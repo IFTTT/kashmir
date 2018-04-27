@@ -112,7 +112,7 @@ module Kashmir
 
     def primitive?(field_value)
       primitives = [String, Date, Time, TrueClass, FalseClass, Symbol]
-      primitives << if RUBY_VERSION > '2.4'
+      primitives << if RUBY_VERSION >= '2.4'
         Integer
       else
         Fixnum
