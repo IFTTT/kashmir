@@ -1,5 +1,5 @@
 require 'minitest/autorun'
-require 'mocha/test_unit'
+require 'mocha/minitest'
 require 'logger'
 
 require 'kashmir'
