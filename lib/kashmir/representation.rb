@@ -111,7 +111,13 @@ module Kashmir
     end
 
     def primitive?(field_value)
-      [Fixnum, String, Date, Time, TrueClass, FalseClass, Symbol].any? do |type|
+      primitives = [String, Date, Time, TrueClass, FalseClass, Symbol]
+      primitives << if RUBY_VERSION > '2.4'
+        Integer
+      else
+        Fixnum
+      end
+      primitives.any? do |type|
         field_value.is_a?(type)
       end
     end
