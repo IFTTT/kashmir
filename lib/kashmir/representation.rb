@@ -53,7 +53,7 @@ module Kashmir
       end
 
       if value.respond_to?(:represent)
-        return value.represent(arguments, skip_cache)
+        return value.represent(arguments, level + 1, skip_cache)
       end
     end
 
