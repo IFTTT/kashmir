@@ -60,7 +60,7 @@ end
 module ActiveRecord
   module Associations
     class Preloader
-      if ActiveRecord::VERSION::STRING >= "4.0.2"
+      if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("4.0.2")
         include ::ArV4Patch
       else
         include ::ArV3Patch
