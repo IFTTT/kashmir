@@ -13,12 +13,12 @@ module ArV4Patch
     end
   end
 
-  def grouped_records(association, records)
+  def grouped_records(association)
     h = {}
     records.each do |record|
       next unless record
 
-      unless record.class._reflect_on_association(association)
+      unless record.class.reflect_on_association(association)
         next
       end
 
