@@ -6,34 +6,12 @@
 #
 
 module ArV4Patch
-
-  def self.included(klass)
-    klass.instance_eval do
-      remove_method :grouped_records
-    end
-  end
-
-  def grouped_records(association)
-    h = {}
-    records.each do |record|
-      next unless record
-
-      unless record.class.reflect_on_association(association)
-        next
-      end
-
-      assoc = record.association(association)
-      klasses = h[assoc.reflection] ||= {}
-      (klasses[assoc.klass] ||= []) << record
-    end
-
-    h.delete(nil)
-    h
+  def grouped_records(association, records_41 = records)
+    super(association, records_41.select { |record| record.class.reflect_on_association(association) })
   end
 end
 
 module ArV3Patch
-
   def self.included(klass)
     klass.instance_eval do
       remove_method :records_by_reflection
@@ -61,7 +39,7 @@ module ActiveRecord
   module Associations
     class Preloader
       if Gem::Version.new(ActiveRecord::VERSION::STRING) >= Gem::Version.new("4.0.2")
-        include ::ArV4Patch
+        prepend ::ArV4Patch
       else
         include ::ArV3Patch
       end
