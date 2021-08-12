@@ -98,7 +98,7 @@ describe 'Caching' do
 
     it 'tries to hit the cache at every level' do
       selects = track_queries do
-        representation = @chef.represent([:name, :restaurant =>[ :name, :rating =>[ :value ]]])
+        @chef.represent([:name, :restaurant =>[ :name, :rating =>[ :value ]]])
       end
       #  SELECT  "restaurants".* FROM "restaurants" WHERE "restaurants"."owner_id" = ? LIMIT 1
       #  SELECT  "ratings".* FROM "ratings" WHERE "ratings"."restaurant_id" = ? LIMIT 1
@@ -106,14 +106,14 @@ describe 'Caching' do
 
       @chef.reload
       selects = track_queries do
-        representation = @chef.represent([:name, :restaurant =>[ :name, :rating =>[ :value ]]])
+        @chef.represent([:name, :restaurant =>[ :name, :rating =>[ :value ]]])
       end
       assert_equal selects.size, 0
     end
 
     it 'tries to fill holes in the cache graph' do
       definition = [:name, :restaurant =>[ :name, :rating =>[ :value ]]]
-      representation = @chef.represent(definition)
+      @chef.represent(definition)
       Kashmir.caching.clear(definition, @chef)
 
       assert_equal 2, Kashmir.caching.keys.size
@@ -130,7 +130,7 @@ describe 'Caching' do
 
   describe 'collections' do
     it 'caches every item' do
-      presented_recipes = AR::Recipe.all.represent([:title])
+      AR::Recipe.all.represent([:title])
 
       cached_keys = %w(
         presenter:AR::Recipe:1:[:title]

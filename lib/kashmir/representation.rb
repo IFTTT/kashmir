@@ -10,7 +10,6 @@ module Kashmir
 
     def run_for(instance, arguments, level=1)
       representation = {}
-      instance_vars = instance.instance_variables
 
       value = read_value(instance, @field)
       if primitive?(value)
@@ -111,7 +110,7 @@ module Kashmir
     end
 
     def primitive?(field_value)
-      [Fixnum, String, Date, Time, TrueClass, FalseClass, Symbol].any? do |type|
+      [Numeric, String, Date, Time, TrueClass, FalseClass, Symbol].any? do |type|
         field_value.is_a?(type)
       end
     end

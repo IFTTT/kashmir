@@ -11,8 +11,6 @@ module Kashmir
 
   class << self
 
-    attr_accessor :logger
-
     def included(klass)
       klass.extend Representable::ClassMethods
       klass.send(:include, Representable)
